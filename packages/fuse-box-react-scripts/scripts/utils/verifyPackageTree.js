@@ -21,7 +21,7 @@ function verifyPackageTree() {
     // These are packages most likely to break in practice.
     // I have not included Babel here because plugins typically don't import Babel (so it's not affected).
     'jest',
-    'fuse-box'   /* FUSE-BOX */
+    'fuse-box' /* FUSE-BOX */,
   ];
   // Inlined from semver-regex, MIT license.
   // Don't want to make this a dependency after ejecting.

@@ -75,7 +75,10 @@ const program = new commander.Command(packageJson.name)
     '--scripts-version <alternative-package>',
     'use a non-standard version of fuse-box-react-scripts'
   )
-  .option('--template <npm-or-git-path-to-template>', 'use a non-standard version of template')
+  .option(
+    '--template <npm-or-git-path-to-template>',
+    'use a non-standard version of template'
+  )
   .option('--use-npm')
   .allowUnknownOption()
   .on('--help', () => {
@@ -209,7 +212,6 @@ function createApp(name, verbose, version, useNpm, template) {
   }
   // run(root, appName, version, verbose, originalDirectory, template, useYarn);
   prerun(root, appName, version, verbose, originalDirectory, template, useYarn);
-
 }
 
 function isYarnAvailable() {
@@ -288,25 +290,27 @@ function prerun(
   template,
   useYarn
 ) {
-  
   const packageToInstall = getInstallPackage(version, originalDirectory);
 
   if (template) {
-
     console.log('Getting template ' + chalk.cyan(template) + '...');
- 
-    install(template, useYarn, null, verbose, checkIfOnline(useYarn)).then(() =>
-     {
-      let packagePath = path.resolve(
-        process.cwd(),
-        'package.json'
-      );
+
+    install(
+      template,
+      useYarn,
+      null,
+      verbose,
+      checkIfOnline(useYarn)
+    ).then(() => {
+      let packagePath = path.resolve(process.cwd(), 'package.json');
 
       let packageJson = require(packagePath);
-      let templatePackage = Object.keys(require(packagePath).devDependencies)[0];
+      let templatePackage = Object.keys(
+        require(packagePath).devDependencies
+      )[0];
 
       // rewrite without devDependencies
-      delete packageJson["devDependencies"];
+      delete packageJson['devDependencies'];
 
       fs.writeFileSync(
         path.join(packagePath),
@@ -316,22 +320,25 @@ function prerun(
       // do not cache as we will be adding to package.json
       delete require.cache[require.resolve(packagePath)];
 
-      let pathToTemplate = path.relative(originalDirectory, path.resolve(
-        process.cwd(),
-        'node_modules',
-        templatePackage,
-        'template'
-      ));
+      let pathToTemplate = path.relative(
+        originalDirectory,
+        path.resolve(process.cwd(), 'node_modules', templatePackage, 'template')
+      );
 
-      console.log("Installed template " + chalk.cyan(templatePackage) + '.');
+      console.log('Installed template ' + chalk.cyan(templatePackage) + '.');
       console.log();
 
-      run(root, appName, version, verbose, originalDirectory, pathToTemplate, useYarn);
+      run(
+        root,
+        appName,
+        version,
+        verbose,
+        originalDirectory,
+        pathToTemplate,
+        useYarn
+      );
     });
-  }
-  else
-    run(root, appName, version, verbose, originalDirectory, null, useYarn);
-
+  } else run(root, appName, version, verbose, originalDirectory, null, useYarn);
 }
 
 function run(
@@ -357,26 +364,30 @@ function run(
     )
     .then(info => {
       console.log(
-        `Installing ${chalk.cyan('react')} and ${chalk.cyan(
-          'react-dom'
-        )}...`
+        `Installing ${chalk.cyan('react')} and ${chalk.cyan('react-dom')}...`
       );
       console.log();
 
-      return install(root, useYarn, reactDependencies, verbose, info.isOnline).then(
-        () => info
-      );
+      return install(
+        root,
+        useYarn,
+        reactDependencies,
+        verbose,
+        info.isOnline
+      ).then(() => info);
     })
     .then(info => {
       const packageName = info.packageName;
-      console.log(
-        `Installing ${chalk.cyan(packageName)}...`
-      );
+      console.log(`Installing ${chalk.cyan(packageName)}...`);
       console.log();
 
-      return install(root, useYarn, scriptDependencies, verbose, info.isOnline).then(
-        () => packageName
-      );
+      return install(
+        root,
+        useYarn,
+        scriptDependencies,
+        verbose,
+        info.isOnline
+      ).then(() => packageName);
     })
     .then(packageName => {
       checkNodeVersion(packageName);
@@ -430,8 +441,6 @@ function run(
       process.exit(1);
     });
 }
-
-
 
 function getInstallPackage(version, originalDirectory) {
   let packageToInstall = 'fuse-box-react-scripts';

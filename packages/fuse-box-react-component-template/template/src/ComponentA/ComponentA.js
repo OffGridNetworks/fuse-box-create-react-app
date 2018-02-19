@@ -11,7 +11,8 @@ class ComponentA extends Component {
           <h2>Welcome to React (Component)</h2>
         </div>
         <p className="ComponentA-intro">
-          To get started, edit <code>src/ComponentA/ComponentA.js</code> and save to reload.
+          To get started, edit <code>src/ComponentA/ComponentA.js</code> and
+          save to reload.
         </p>
       </div>
     );

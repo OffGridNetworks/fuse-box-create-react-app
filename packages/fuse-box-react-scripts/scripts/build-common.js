@@ -8,52 +8,60 @@
  */
 // @remove-on-eject-end
 const paths = require('../config/paths'),
-    fsbx = require("fuse-box"),
-    FuseBox = fsbx.FuseBox,
-    path = require('path'),
-    fs = require('fs-extra'),
-    chalk = require('chalk');
+  fsbx = require('fuse-box'),
+  FuseBox = fsbx.FuseBox,
+  path = require('path'),
+  fs = require('fs-extra'),
+  chalk = require('chalk');
 
-var nonce = 'xxxxxxxx-xxxx-4xxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-})
+var nonce = 'xxxxxxxx-xxxx-4xxx'.replace(/[xy]/g, function(c) {
+  var r = (Math.random() * 16) | 0,
+    v = c == 'x' ? r : (r & 0x3) | 0x8;
+  return v.toString(16);
+});
 
 const bundleSuffix = '-' + nonce + '.js';
-const BUNDLE = 'bundle'
+const BUNDLE = 'bundle';
 
-exports.initBuilder = function ({ srcDir, targetDir, port}) {
+exports.initBuilder = function({ srcDir, targetDir, port }) {
+  //var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
+  var fuseConfigFile = 'fuse.config.js';
+  var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
 
-    //var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
-    var fuseConfigFile = "fuse.config.js";
-    var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
+  // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
+  if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
+    fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
 
-    // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
-    if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
-        fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
+  var fuseConfig = require(fuseConfigPath);
 
-    var fuseConfig = require(fuseConfigPath);
+  srcDir = srcDir || paths.appSrc;
+  targetDir = targetDir || paths.appBuild;
 
-    srcDir = srcDir || paths.appSrc;
-    targetDir = targetDir || paths.appBuild;
+  return fuseConfig.initBuilder({
+    paths: paths,
+    srcDir: srcDir,
+    targetDir: targetDir,
+    port: port,
+    env: getClientEnvironment(),
+  });
+};
 
-    return fuseConfig.initBuilder({paths: paths, srcDir: srcDir, targetDir: targetDir, port: port, env: getClientEnvironment()});
-}
+exports.buildBabel = function(srcDir, targetDir) {
+  const buildbabel = require('./build-babel');
 
-exports.buildBabel = function (srcDir, targetDir) {
+  var fuseConfigFile =
+    process.env.NODE_ENV == 'production'
+      ? 'fuse.config.prod.js'
+      : 'fuse.config.dev.js';
+  var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
 
-    const buildbabel = require('./build-babel');
+  // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
+  if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
+    fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
 
-    var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
-    var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
-
-    // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
-    if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
-        fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
-
-    var fuseConfig = require(fuseConfigPath);
-    return buildbabel(fuseConfig.babelConfig(srcDir, targetDir));
-}
+  var fuseConfig = require(fuseConfigPath);
+  return buildbabel(fuseConfig.babelConfig(srcDir, targetDir));
+};
 
 const REACT_APP = /^REACT_APP_/i;
 
@@ -68,7 +76,7 @@ function getClientEnvironment() {
       {
         // Useful for determining whether we’re running in production mode.
         // Most importantly, it switches React into the correct mode.
-        NODE_ENV: process.env.NODE_ENV || 'development'
+        NODE_ENV: process.env.NODE_ENV || 'development',
       }
     );
 

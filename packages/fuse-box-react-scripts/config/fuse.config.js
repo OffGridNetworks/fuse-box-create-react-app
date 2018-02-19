@@ -12,11 +12,14 @@ const {
   EnvPlugin,
   BabelPlugin,
   SVGPlugin,
+  /* LESSPlugin, */
   CSSPlugin,
+  JSONPlugin,
   QuantumPlugin,
   WebIndexPlugin,
   Sparky,
 } = require('fuse-box');
+
 const path = require('path');
 let fuse, app, vendor, isProduction;
 
@@ -24,15 +27,17 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
   Sparky.task('config', () => {
     fuse = new FuseBox({
       homeDir: srcDir,
-      sourceMaps: !isProduction,
+      sourceMaps: isProduction ? false : { project: true, vendor: false },
       hash: isProduction,
       cache: !isProduction,
-      target: 'browser@es5',
       output: path.join(targetDir, '$name.js'),
+      target: 'browser@es5',
       plugins: [
         EnvPlugin(env),
         SVGPlugin(),
+        /* [LESSPlugin(), CSSPlugin()], */
         CSSPlugin(),
+        JSONPlugin(),
         WebIndexPlugin({
           template: path.join(srcDir, 'index.html'),
           path: './',
@@ -53,6 +58,10 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
     });
     vendor = fuse.bundle('vendor').instructions('~ index.js');
     app = fuse.bundle('app').instructions('!> [index.js]');
+    /* app = fuse
+      .bundle('app')
+      .target('browser')
+      .instructions('> index.js'); */
   });
 
   Sparky.task('default', () => null);
@@ -64,15 +73,16 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
   });
 
   Sparky.task('static', () => {
-    if (Array.isArray(paths.appPublic)) {
-      return Promise.all(
-        paths.appPublic.map(function(pathPublic) {
-          return Sparky.watch(pathPublic + '/**/*').dest(targetDir);
-        })
+    var watchPaths = Array.isArray(paths.appPublic)
+      ? paths.appPublic.map(pathPublic => pathPublic + '/**/*')
+      : paths.appPublic + '/**/*';
+    return Sparky.watch(watchPaths).file(``, file => {
+      let root = paths.appPublic.find(
+        element => file.root.substr(0, element.length) == element
       );
-    } else {
-      return Sparky.watch(paths.appPublic + '/**/*').dest(targetDir);
-    }
+      let relativePath = root ? path.relative(root, file.root) : '';
+      file.copy(path.join(targetDir, relativePath));
+    });
   });
 
   Sparky.task('clean', () => Sparky.src(targetDir).clean(targetDir));
