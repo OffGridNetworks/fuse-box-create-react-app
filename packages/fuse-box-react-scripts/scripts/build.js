@@ -48,7 +48,7 @@ const { printBrowsers } = require('./utils/browsersHelper');
 const buildcommon = require('./build-common');
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml('index.html'), paths.appIndexJs])) {
+if (!checkRequiredFiles([paths.appHtml('index.html')])) {
   process.exit(1);
 }
 
@@ -78,7 +78,7 @@ checkBrowsers(paths.appPath)
 
       const appPackage = require(paths.appPackageJson);
       const publicUrl = paths.publicUrl;
-      const publicPath = paths.appPublic;
+      const publicPath = paths.appBuild;
       const buildFolder = path.relative(process.cwd(), paths.appBuild);
       printHostingInstructions(
         appPackage,
@@ -87,8 +87,22 @@ checkBrowsers(paths.appPath)
         buildFolder,
         paths.useYarn
       );
+
+      console.log('You may also serve it locally with a static server:')
+      console.log();
+      if (paths.useYarn) {
+        console.log('  ' + chalk.cyan('yarn') + ' global add pushstate-server');
+      } else {
+        console.log('  ' + chalk.cyan('npm') + ' install -g pushstate-server');
+      }
+      console.log('  ' + chalk.cyan('pushstate-server') + ' ' + buildFolder);
+    
+      console.log('  ' + chalk.cyan(process.platform === 'win32' ? 'start' : 'open') + ' http://localhost:9000');
+      console.log();
+
+      
       printBrowsers(paths.appPath);
-      process.exit(0);
+      setTimeout(process.exit, 500);
     },
     err => {
       console.log(chalk.red('Failed to compile.\n'));
@@ -151,7 +165,7 @@ function build() {
 
   return builder().then(function(val) {
     if (!val) {
-      return reject('Build Failed');
+      return false;
     }
 
     return true;

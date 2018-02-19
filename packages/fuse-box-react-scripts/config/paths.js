@@ -85,9 +85,6 @@ module.exports = {
   appHtml: function(file) {
     return resolveApp(path.join(getPackageDirectory('src'), file));
   } /* FUSE-BOX */,
-  appIndexJs: resolveApp(
-    path.join(getPackageDirectory('src'), 'index.js')
-  ) /* FUSE-BOX */,
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp(getPackageDirectory('src')) /* FUSE-BOX */,
   testsSetup: resolveApp(

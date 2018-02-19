@@ -50,7 +50,7 @@ var buildcommon = require('./build-common');
 const isInteractive = process.stdout.isTTY;
 
 // Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appIndexJs, paths.appHtml('index.html')])) {
+if (!checkRequiredFiles([paths.appHtml('index.html')])) {
   process.exit(1);
 }
 
