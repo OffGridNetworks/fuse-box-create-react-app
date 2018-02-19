@@ -63,8 +63,6 @@ checkBrowsers(paths.appPath)
 
     if (paths.appStoriesJs) fs.emptyDirSync(paths.appStoriesBuild);
 
-    // Merge with the public folder
-    copyPublicFolder();
     // Start the Fuse-Box build
     return build();
   })
@@ -160,9 +158,3 @@ function build() {
   });
 }
 
-function copyPublicFolder() {
-  fs.copySync(paths.appPublic, paths.appBuild, {
-    dereference: true,
-    filter: file => file !== paths.appHtml,
-  });
-}
