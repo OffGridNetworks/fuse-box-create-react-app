@@ -73,11 +73,17 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
   });
 
   Sparky.task('static', () => {
-    var watchPaths = Array.isArray(paths.appPublic)
+    const watchPaths = Array.isArray(paths.appPublic)
       ? paths.appPublic.map(pathPublic => pathPublic + '/**/*')
       : paths.appPublic + '/**/*';
+
+    const publicArray = Array.isArray(paths.appPublic)
+      ? paths.appPublic
+      : [paths.appPublic];
+
     return Sparky.watch(watchPaths).file(``, file => {
-      let root = paths.appPublic.find(
+      
+      let root = publicArray.find(
         element => file.root.substr(0, element.length) == element
       );
       let relativePath = root ? path.relative(root, file.root) : '';
