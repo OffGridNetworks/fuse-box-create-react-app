@@ -40,6 +40,7 @@ const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
 const detect = require('detect-port');
 const getProcessForPort = require('react-dev-utils/getProcessForPort');
 const fs = require('fs-extra');
+const inquirer = require('react-dev-utils/inquirer');
 
 const openBrowser = require('react-dev-utils/openBrowser');
 const paths = require('../config/paths');
@@ -93,7 +94,7 @@ function buildStoriesComponent(port) {
       path.join(paths.appStoriesBuild, paths.Bundle)
     )
     .bundle('>index.js')
-    .then(function(val) {
+    .then(function (val) {
       if (!val) return Promise.reject(val);
 
       var server = buildcommon
@@ -108,7 +109,7 @@ function buildStoriesComponent(port) {
         });
 
       server.httpServer.app.use(express.static(paths.appStoriesBuild));
-      server.httpServer.app.get('*', function(req, res) {
+      server.httpServer.app.get('*', function (req, res) {
         res.sendFile(path.join(paths.appStoriesBuild, 'index.html'));
       });
 
@@ -131,14 +132,14 @@ function run(port) {
   var builder = paths.appStoriesJs ? buildStoriesComponent : buildApp;
 
   var server = builder(port)
-    .then(function(server) {
+    .then(function (server) {
       process.nextTick(() => {
         console.log(chalk.cyan('Started the development server...'));
         console.log();
         openBrowser(protocol + '://' + host + ':' + port + '/');
       });
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.log('Failed during development hosting');
       console.log(err);
       process.exit(1);
@@ -162,16 +163,24 @@ checkBrowsers(paths.appPath)
         var question =
           chalk.yellow(
             'Something is already running on port ' +
-              DEFAULT_PORT +
-              '.' +
-              (existingProcess ? ' Probably:\n  ' + existingProcess : '')
+            DEFAULT_PORT +
+            '.' +
+            (existingProcess ? ' Probably:\n  ' + existingProcess : '')
           ) + '\n\nWould you like to run the app on another port instead?';
 
-        prompt(question, true).then(shouldChangePort => {
-          if (shouldChangePort) {
-            run(port);
-          }
-        });
+        inquirer
+          .prompt({
+            type: 'confirm',
+            name: 'shouldChangePort',
+            message:
+              question,
+            default: true,
+          })
+          .then(shouldChangePort => {
+            if (shouldChangePort) {
+              run(port);
+            }
+          });
       } else {
         console.log(
           chalk.red(
