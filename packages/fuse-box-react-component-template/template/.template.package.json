@@ -1,0 +1,18 @@
+{
+  "devDependencies": {
+    "@kadira/storybook": "^2.35.3"
+  },
+  "directories": {
+    "stories-js": "src/__stories__/.storybook",
+    "build": "dist",
+    "stories-build": "dist-storybook",
+    "bundle": "js",
+    "public": [
+      "src/public",
+      "src/__stories__/public"
+    ]
+  },
+  "scripts": {
+    "deploy": "git subtree push --prefix dist-storybook origin gh-pages"
+  }
+}

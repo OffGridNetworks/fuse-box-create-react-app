@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "emitDecoratorMetadata": false,
+    "experimentalDecorators": true,
+    "importHelpers": false,
+    "noEmitHelpers": true,
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
+  }
+}
