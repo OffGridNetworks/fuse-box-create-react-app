@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-scripts",
-  "version": "3.0.33",
+  "version": "3.0.34",
   "description": "Configuration and scripts for Fuse-Box Create React App.",
   "repository": "offgridnetworks/fuse-box-create-react-app",
   "license": "MIT",
@@ -22,6 +22,7 @@
     "fuse-box-react-scripts": "./bin/fuse-box-react-scripts.js"
   },
   "dependencies": {
+    "browserslist": "^3.1.1",
     "chalk": "2.3.0",
     "cross-spawn": "5.1.0",
     "detect-port": "1.2.1",
