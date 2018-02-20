@@ -232,7 +232,7 @@ function shouldUseYarn() {
   }
 }
 
-function install(root, useYarn, dependencies, verbose, isOnline) {
+function install(root, useYarn, dependencies, verbose, isOnline, dev) {
   return new Promise((resolve, reject) => {
     let command;
     let args;
@@ -241,6 +241,9 @@ function install(root, useYarn, dependencies, verbose, isOnline) {
       args = ['add', '--exact'];
       if (!isOnline) {
         args.push('--offline');
+      }
+      if (dev) {
+        args.push('--dev');
       }
       [].push.apply(args, dependencies);
 
@@ -256,7 +259,7 @@ function install(root, useYarn, dependencies, verbose, isOnline) {
       command = 'npm';
       args = [
         'install',
-        '--save',
+        dev ? '--save-dev' : '--save',
         '--save-exact',
         '--loglevel',
         'error',
@@ -290,8 +293,6 @@ function prerun(
   template,
   useYarn
 ) {
-  const packageToInstall = getInstallPackage(version, originalDirectory);
-
   if (template) {
     console.log('Getting template ' + chalk.cyan(template) + '...');
 
@@ -300,7 +301,8 @@ function prerun(
       useYarn,
       null,
       verbose,
-      checkIfOnline(useYarn)
+      checkIfOnline(useYarn),
+      true
     ).then(() => {
       let packagePath = path.resolve(process.cwd(), 'package.json');
 
@@ -373,7 +375,8 @@ function run(
         useYarn,
         reactDependencies,
         verbose,
-        info.isOnline
+        info.isOnline,
+        false
       ).then(() => info);
     })
     .then(info => {
@@ -386,7 +389,8 @@ function run(
         useYarn,
         scriptDependencies,
         verbose,
-        info.isOnline
+        info.isOnline,
+        true
       ).then(() => packageName);
     })
     .then(packageName => {
@@ -659,7 +663,7 @@ function setCaretRangeForRuntimeDeps(packageName) {
     process.exit(1);
   }
 
-  const packageVersion = packageJson.dependencies[packageName];
+  const packageVersion = packageJson.devDependencies[packageName];
   if (typeof packageVersion === 'undefined') {
     console.error(chalk.red(`Unable to find ${packageName} in package.json`));
     process.exit(1);

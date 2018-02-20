@@ -20,7 +20,9 @@ const path = require('path');
 const chalk = require('chalk');
 const execSync = require('child_process').execSync;
 const spawn = require('react-dev-utils/crossSpawn');
-const { defaultBrowsers } = require('./utils/browsersHelper');
+const {
+  defaultBrowsers,
+} = require('fuse-box-react-scripts/scripts/utils/browsersHelper');
 const os = require('os');
 
 function isInGitRepository() {
@@ -93,11 +95,11 @@ module.exports = function(
 
   // Setup the script rules
   appPackage.scripts = {
-    start: 'fuse-box-react-scripts start',
-    build: 'fuse-box-react-scripts build',
-    test: 'fuse-box-react-scripts test --env=jsdom',
-    eject: 'fuse-box-react-scripts eject',
-    ejectconfig: 'fuse-box-react-scripts ejectconfig',
+    start: ownPackageName + ' start',
+    build: ownPackageName + ' build',
+    test: ownPackageName + ' test --env=jsdom',
+    eject: ownPackageName + ' eject',
+    ejectconfig: ownPackageName + ' ejectconfig',
   };
 
   appPackage.browserslist = defaultBrowsers;
@@ -207,16 +209,15 @@ module.exports = function(
 
   if (useYarn) {
     command = 'yarnpkg';
-    args = ['add'];
+    if (!isReactInstalled(appPackage)) args.push('add', 'react', 'react-dom');
   } else {
     command = 'npm';
-    args = ['install', '--save', verbose && '--verbose'].filter(e => e);
+    args = ['install', verbose && '--verbose'].filter(e => e);
+    if (!isReactInstalled(appPackage))
+      args.push('--save', 'react', 'react-dom');
   }
 
-  // Install react and react-dom if older FB-CRA or CRA did not
-  if (!isReactInstalled(appPackage)) args.push('react', 'react-dom');
-
-  // Install additional template dependencies, if present
+  // Install additional template dependencies, if present;  prefer using .template.package.json above
   const templateDependenciesPath = path.join(
     appPath,
     '.template.dependencies.json'
@@ -231,15 +232,13 @@ module.exports = function(
     fs.unlinkSync(templateDependenciesPath);
   }
 
-  if (template || !isReactInstalled(appPackage)) {
-    console.log(`Installing remaining dependencies using using ${command}...`);
-    console.log();
+  console.log(`Installing remaining dependencies using using ${command}...`);
+  console.log();
 
-    const proc = spawn.sync(command, args, { stdio: 'inherit' });
-    if (proc.status !== 0) {
-      console.error(`\`${command} ${args.join(' ')}\` failed`);
-      return;
-    }
+  const proc = spawn.sync(command, args, { stdio: 'inherit' });
+  if (proc.status !== 0) {
+    console.error(`\`${command} ${args.join(' ')}\` failed`);
+    return;
   }
 
   if (tryGitInit(appPath)) {
