@@ -1,6 +1,6 @@
 {
   "short_name": "React App",
-  "name": "Fuse-Box Create React App Sample",
+  "name": "Fuse-Box Create React App TypeScript Sample",
   "icons": [
     {
       "src": "favicon.ico",

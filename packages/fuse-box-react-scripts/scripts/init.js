@@ -186,10 +186,10 @@ module.exports = function(
     );
   }
 
-  // Install additional package json entries dependencies, if present
-  var templatePackagePath = path.join(appPath, '.template.package.json');
+  // Install additional package json entries devDependencies, if present
+  const templatePackagePath = path.join(__dirname, '.template.package.json');
   if (fs.existsSync(templatePackagePath)) {
-    var mergePackage = require(templatePackagePath);
+    let mergePackage = require(templatePackagePath);
 
     Object.keys(mergePackage).forEach(function(key) {
       appPackage[key] = appPackage[key] || {};
@@ -202,6 +202,23 @@ module.exports = function(
     );
     fs.unlinkSync(templatePackagePath);
   }
+
+  // Install additional own package json entries devDependencies, if present
+  if (!template) {
+    const ownPackagePath = path.resolve(__dirname, '..', 'package.json');
+    let devDependencies = require(ownPackagePath).devDependencies;
+
+    if (devDependencies) {
+      Object.assign(appPackage.devDependencies, devDependencies);
+    }
+
+    fs.writeFileSync(
+      path.join(appPath, 'package.json'),
+      JSON.stringify(appPackage, null, 2)
+    );
+    fs.unlinkSync(ownPackagePath);
+  }
+
   // ADDITIONAL FUSE-BOX END
 
   let command;

@@ -91,7 +91,7 @@ module.exports = {
     path.join(getPackageDirectory('src'), 'setupTests.js')
   ) /* FUSE-BOX */,
   appNodeModules: resolveApp('node_modules'),
-  ownNodeModules: resolveApp('node_modules') /* FUSE-BOX */,
+  ownNodeModules: resolveOwn('node_modules') /* FUSE-BOX */,
   publicUrl: getPublicUrl(resolveApp('package.json')),
   servedPath: getServedPath(resolveApp('package.json')),
   // ADDITIONAL ITEMS ADDED FOR /* FUSE-BOX */
@@ -107,7 +107,6 @@ module.exports = {
   yarnLockFile: resolveApp('yarn.lock') /* FUSE-BOX */,
   appDirectory: appDirectory /* FUSE-BOX */,
   ownPath: resolveOwn('.'),
-  ownNodeModules: resolveOwn('node_modules'), // This is empty on npm 3
 };
 
 module.exports.srcPaths = [module.exports.appSrc];

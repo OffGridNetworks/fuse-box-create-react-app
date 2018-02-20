@@ -24,7 +24,6 @@ const bundleSuffix = '-' + nonce + '.js';
 const BUNDLE = 'bundle';
 
 exports.initBuilder = function({ srcDir, targetDir, port }) {
-  //var fuseConfigFile = (process.env.NODE_ENV == 'production') ? "fuse.config.prod.js" : "fuse.config.dev.js";
   var fuseConfigFile = 'fuse.config.js';
   var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
 

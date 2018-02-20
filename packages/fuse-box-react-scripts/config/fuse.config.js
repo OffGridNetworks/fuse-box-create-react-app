@@ -23,7 +23,7 @@ const {
 const path = require('path');
 let fuse, app, vendor, isProduction;
 
-exports.initBuilder = function ({ paths, srcDir, targetDir, port, env }) {
+exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
   Sparky.task('config', () => {
     fuse = new FuseBox({
       homeDir: srcDir,
@@ -53,14 +53,13 @@ exports.initBuilder = function ({ paths, srcDir, targetDir, port, env }) {
           ],
         }),
         isProduction &&
-        QuantumPlugin({ removeExportsInterop: false, uglify: true }),
+          QuantumPlugin({ removeExportsInterop: false, uglify: true }),
       ],
     });
     vendor = fuse.bundle('vendor').instructions('~ index.js');
     app = fuse.bundle('app').instructions('!> [index.js]');
     /* app = fuse
       .bundle('app')
-      .target('browser')
       .instructions('> index.js'); */
   });
 
@@ -82,7 +81,6 @@ exports.initBuilder = function ({ paths, srcDir, targetDir, port, env }) {
       : [paths.appPublic];
 
     return Sparky.watch(watchPaths).file(``, file => {
-
       let root = publicArray.find(
         element => file.root.substr(0, element.length) == element
       );
@@ -97,13 +95,12 @@ exports.initBuilder = function ({ paths, srcDir, targetDir, port, env }) {
     isProduction = true;
   });
 
-  Sparky.task('dist', ['prod-env', 'config', 'static'],
-    async () => {
-      await fuse.run();
-    });
+  Sparky.task('dist', ['prod-env', 'config', 'static'], async () => {
+    await fuse.run();
+  });
 
   return {
-    start: function (tname) {
+    start: function(tname) {
       return Sparky.start(tname);
     },
   };

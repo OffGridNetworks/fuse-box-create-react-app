@@ -1,0 +1,20 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": true,
+        "noImplicitAny": false,
+        "noImplicitUseStrict": false,
+        "removeComments": true,
+        "importHelpers": false,
+        "noLib": false,
+        "noEmitHelpers": true,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
+    }
+}

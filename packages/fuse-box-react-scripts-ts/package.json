@@ -1,0 +1,21 @@
+{
+  "name": "fuse-box-react-scripts-ts",
+  "version": "3.0.31",
+  "description": "Configuration and scripts for Fuse-Box Create React App TypeScript Edition",
+  "repository": "offgridnetworks/fuse-box-create-react-app",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8"
+  },
+  "bugs": {
+    "url": "https://github.com/offgridnetworks/fuse-box-create-react-app/issues"
+  },
+  "files": [
+    "config",
+    "template"
+  ],
+  "dependencies": {
+    "tslib":"^1.9.0",
+    "typescript": "^2.7.2"
+  }
+}

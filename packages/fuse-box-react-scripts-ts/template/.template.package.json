@@ -1,0 +1,5 @@
+{
+    "directories": {
+        "config": "node_modules/fuse-box-react-scripts-ts/config"
+    }
+}

@@ -10,7 +10,6 @@
 const {
   FuseBox,
   EnvPlugin,
-  BabelPlugin,
   SVGPlugin,
   /* LESSPlugin, */
   CSSPlugin,
@@ -42,16 +41,6 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
           template: path.join(srcDir, 'index.html'),
           path: './',
         }),
-        BabelPlugin({
-          sourceMaps: !isProduction,
-          presets: ['react', 'env'],
-          plugins: [
-            'transform-decorators-legacy',
-            'transform-function-bind',
-            'transform-object-rest-spread',
-            'transform-class-properties',
-          ],
-        }),
         isProduction &&
           QuantumPlugin({ removeExportsInterop: false, uglify: true }),
       ],
@@ -60,7 +49,6 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
     app = fuse.bundle('app').instructions('!> [index.js]');
     /* app = fuse
       .bundle('app')
-      .target('browser')
       .instructions('> index.js'); */
   });
 
