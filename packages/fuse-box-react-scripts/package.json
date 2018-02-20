@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-scripts",
-  "version": "3.0.42",
+  "version": "3.0.43",
   "description": "Configuration and scripts for Fuse-Box Create React App.",
   "repository": "offgridnetworks/fuse-box-create-react-app",
   "license": "MIT",
@@ -14,8 +14,7 @@
     "bin",
     "config",
     "scripts",
-    "template",
-    "utils"
+    "template"
   ],
   "bin": {
     "react-scripts": "./bin/fuse-box-react-scripts.js",
