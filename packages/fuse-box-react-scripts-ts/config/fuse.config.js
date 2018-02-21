@@ -17,7 +17,7 @@ const {
 } = require('fuse-box');
 
 const path = require('path');
-let fuse, app, vendor, isProduction;
+let fuse, app, vendor, isProduction, isTest;
 
 exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
   Sparky.task('config', () => {
@@ -27,7 +27,7 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
       hash: isProduction,
       cache: !isProduction,
       output: path.join(targetDir, '$name.js'),
-      target: 'browser@es5',
+      target: isProduction ? 'browser@es5' : 'browser@es2015',
       plugins: [
         EnvPlugin(env),
         SVGPlugin(),
@@ -39,7 +39,6 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
           path: './',
         }),
         isProduction &&
-          false &&
           QuantumPlugin({ removeExportsInterop: false, uglify: true }),
       ],
     });
@@ -84,20 +83,7 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
   });
 
   Sparky.task('dist', ['prod-env', 'config', 'static'], () => {
-    return new Promise((resolve, reject) => {
-      let _error = console.error;
-      let errors = false;
-
-      console.error = function() {
-        errors = true;
-        _error(...arguments);
-        setTimeout(() => {
-          reject(new Error('Build errors occurred'));
-        }, 2000);
-      };
-
-      return fuseRun();
-    });
+    return fuseRun();
   });
 
   /** 
