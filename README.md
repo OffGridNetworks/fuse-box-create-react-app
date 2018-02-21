@@ -28,12 +28,12 @@ cd my-app/
 npm start
 ```
 
-or using original Facebook create-react-app
+or using TypeScript
 
 ```sh
-npm install -g create-react-app
+npm install -g fuse-box-create-react-app
 
-create-react-app my-app --scripts-version fuse-box-react-scripts
+create-react-app my-app-template fuse-box-react-scripts-ts
 cd my-app/
 npm start
 ```
@@ -49,6 +49,7 @@ npm start
 ```
 
 or to create a re-usable React Component with demo pages already setup using React Storybook
+(NOT CURRENTLY WORKING)
 
 ```sh
 npm install -g fuse-box-create-react-app
