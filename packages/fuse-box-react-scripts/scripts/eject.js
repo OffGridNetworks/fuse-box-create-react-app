@@ -144,6 +144,11 @@ inquirer
       console.log(`  Adding ${cyan(file.replace(ownPath, ''))} to the project`);
       fs.writeFileSync(file.replace(ownPath, appPath), content);
     });
+
+    if (paths.appConfig.indexOf('node_modules') > -1) {
+      fs.copySync(paths.appConfig, path.join(appPath, 'config'));
+    }
+
     console.log();
 
     const ownPackage = require(path.join(ownPath, 'package.json'));
@@ -152,25 +157,106 @@ inquirer
     console.log(cyan('Updating the dependencies'));
     const ownPackageName = ownPackage.name;
     if (appPackage.devDependencies) {
-      // We used to put react-scripts in devDependencies
+      let devDependenciesToAdd = {};
+
+      // We put react-scripts in devDependencies
       if (appPackage.devDependencies[ownPackageName]) {
         console.log(`  Removing ${cyan(ownPackageName)} from devDependencies`);
         delete appPackage.devDependencies[ownPackageName];
       }
+
+      // We also put our own devDependencies in app, so remove them too and replace with contents
+      Object.keys(ownPackage.devDependencies).forEach(ownDependency => {
+        if (appPackage.devDependencies[ownDependency]) {
+          console.log(`  Removing ${cyan(ownDependency)} from devDependencies`);
+          delete appPackage.devDependencies[ownDependency];
+          let childPackage = require(path.join(
+            appPath,
+            'node_modules',
+            ownDependency,
+            'package.json'
+          ));
+          Object.keys(childPackage.dependencies).forEach(key => {
+            // For some reason optionalDependencies end up in dependencies after install
+            if (
+              childPackage.optionalDependencies &&
+              childPackage.optionalDependencies[key]
+            ) {
+              return;
+            }
+            console.log(`  Adding ${cyan(key)} to devDependencies`);
+            devDependenciesToAdd[key] = childPackage.dependencies[key];
+          });
+        }
+      });
+
+      // Finally eject any template devDependencies use us as a devDependency
+      let devDependenciesToRemove = [];
+
+      Object.keys(appPackage.devDependencies).forEach(key => {
+        let childPackage = require(path.join(
+          appPath,
+          'node_modules',
+          key,
+          'package.json'
+        ));
+        if (
+          childPackage.devDependencies &&
+          childPackage.devDependencies[ownPackageName]
+        ) {
+          console.log(`  Removing ${cyan(key)} from devDependencies`);
+          devDependenciesToRemove.push(key);
+
+          Object.keys(childPackage.dependencies).forEach(key => {
+            // For some reason optionalDependencies end up in dependencies after install
+            if (
+              childPackage.optionalDependencies &&
+              childPackage.optionalDependencies[key]
+            ) {
+              return;
+            }
+            console.log(`  Adding ${cyan(key)} to devDependencies`);
+            devDependenciesToAdd[key] = childPackage.dependencies[key];
+          });
+        }
+      });
+
+      // Actually add and delete the selected devDependencies (done subsequently to avoid loop churn)
+      Object.assign(appPackage.devDependencies, devDependenciesToAdd);
+      devDependenciesToRemove.forEach(key => {
+        delete appPackage.devDependencies[key];
+      });
     }
+
     appPackage.dependencies = appPackage.dependencies || {};
+    appPackage.devDependencies = appPackage.devDependencies || {};
+
+    if (appPackage.directories && appPackage.directories.config) {
+      console.log(
+        `  Resetting ${cyan('config')} in package.json ${cyan(
+          'directories'
+        )} to default`
+      );
+      appPackage.directories.config = 'config';
+    }
+
     if (appPackage.dependencies[ownPackageName]) {
       console.log(`  Removing ${cyan(ownPackageName)} from dependencies`);
       delete appPackage.dependencies[ownPackageName];
     }
+
     Object.keys(ownPackage.dependencies).forEach(key => {
       // For some reason optionalDependencies end up in dependencies after install
-      if (ownPackage.optionalDependencies[key]) {
+      if (
+        ownPackage.optionalDependencies &&
+        ownPackage.optionalDependencies[key]
+      ) {
         return;
       }
-      console.log(`  Adding ${cyan(key)} to dependencies`);
-      appPackage.dependencies[key] = ownPackage.dependencies[key];
+      console.log(`  Adding ${cyan(key)} to devDependencies`);
+      appPackage.devDependencies[key] = ownPackage.dependencies[key];
     });
+
     // Sort the deps
     const unsortedDependencies = appPackage.dependencies;
     appPackage.dependencies = {};
@@ -178,6 +264,14 @@ inquirer
       .sort()
       .forEach(key => {
         appPackage.dependencies[key] = unsortedDependencies[key];
+      });
+
+    const unsortedDevDependencies = appPackage.devDependencies;
+    appPackage.devDependencies = {};
+    Object.keys(unsortedDevDependencies)
+      .sort()
+      .forEach(key => {
+        appPackage.devDependencies[key] = unsortedDevDependencies[key];
       });
     console.log();
 
@@ -272,4 +366,10 @@ inquirer
     );
     console.log(green('  http://goo.gl/forms/Bi6CZjk1EqsdelXk1'));
     console.log();
+  })
+  .catch(err => {
+    if (err && err.message) {
+      console.log(err.message);
+    }
+    process.exit(1);
   });

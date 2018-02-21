@@ -71,7 +71,7 @@ checkBrowsers(paths.appPath)
       if (!success) {
         console.log(chalk.yellow('Compiled with warnings.\n'));
       } else {
-        console.log(chalk.green('Compiled successfully.\n'));
+        console.log(chalk.green('Compiled.\n'));
       }
 
       console.log();
@@ -88,7 +88,7 @@ checkBrowsers(paths.appPath)
         paths.useYarn
       );
 
-      console.log('You may also serve it locally with a static server:')
+      console.log('You may also serve it locally with a static server:');
       console.log();
       if (paths.useYarn) {
         console.log('  ' + chalk.cyan('yarn') + ' global add pushstate-server');
@@ -96,17 +96,20 @@ checkBrowsers(paths.appPath)
         console.log('  ' + chalk.cyan('npm') + ' install -g pushstate-server');
       }
       console.log('  ' + chalk.cyan('pushstate-server') + ' ' + buildFolder);
-    
-      console.log('  ' + chalk.cyan(process.platform === 'win32' ? 'start' : 'open') + ' http://localhost:9000');
+
+      console.log(
+        '  ' +
+          chalk.cyan(process.platform === 'win32' ? 'start' : 'open') +
+          ' http://localhost:9000'
+      );
       console.log();
 
-      
       printBrowsers(paths.appPath);
       setTimeout(process.exit, 500);
     },
     err => {
       console.log(chalk.red('Failed to compile.\n'));
-      printBuildError(err);
+      //   printBuildError(err);
       process.exit(1);
     }
   )
@@ -163,12 +166,5 @@ function build() {
 
   var builder = paths.appStoriesJs ? buildStoriesComponent : buildApp;
 
-  return builder().then(function(val) {
-    if (!val) {
-      return false;
-    }
-
-    return true;
-  });
+  return builder();
 }
-

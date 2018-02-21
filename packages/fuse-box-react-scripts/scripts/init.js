@@ -182,12 +182,12 @@ module.exports = function(
 
     fs.writeFileSync(
       path.join(bowerPackagePath),
-      JSON.stringify(bowerPackage, null, 2)
+      JSON.stringify(bowerPackage, null, 2) + os.EOL
     );
   }
 
   // Install additional package json entries devDependencies, if present
-  const templatePackagePath = path.join(__dirname, '.template.package.json');
+  const templatePackagePath = path.join(appPath, '.template.package.json');
   if (fs.existsSync(templatePackagePath)) {
     let mergePackage = require(templatePackagePath);
 
@@ -198,7 +198,7 @@ module.exports = function(
 
     fs.writeFileSync(
       path.join(appPath, 'package.json'),
-      JSON.stringify(appPackage, null, 2)
+      JSON.stringify(appPackage, null, 2) + os.EOL
     );
     fs.unlinkSync(templatePackagePath);
   }
@@ -214,7 +214,7 @@ module.exports = function(
 
     fs.writeFileSync(
       path.join(appPath, 'package.json'),
-      JSON.stringify(appPackage, null, 2)
+      JSON.stringify(appPackage, null, 2) + os.EOL
     );
     fs.unlinkSync(ownPackagePath);
   }

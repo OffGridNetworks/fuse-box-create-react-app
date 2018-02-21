@@ -283,6 +283,44 @@ function install(root, useYarn, dependencies, verbose, isOnline, dev) {
   });
 }
 
+function abort(root, appName, reason) {
+  console.log();
+  console.log('Aborting installation.');
+  if (reason.command) {
+    console.log(`  ${chalk.cyan(reason.command)} has failed.`);
+  } else {
+    console.log(chalk.red('Unexpected error. Please report it as a bug:'));
+    console.log(reason);
+  }
+  console.log();
+
+  // On 'exit' we will delete these files from target directory.
+  const knownGeneratedFiles = ['package.json', 'node_modules', 'yarn.lock'];
+  const currentFiles = fs.readdirSync(path.join(root));
+  currentFiles.forEach(file => {
+    knownGeneratedFiles.forEach(fileToMatch => {
+      // This remove all of knownGeneratedFiles.
+      if (file === fileToMatch) {
+        console.log(`Deleting generated file... ${chalk.cyan(file)}`);
+        fs.removeSync(path.join(root, file));
+      }
+    });
+  });
+  const remainingFiles = fs.readdirSync(path.join(root));
+  if (!remainingFiles.length) {
+    // Delete target folder if empty
+    console.log(
+      `Deleting ${chalk.cyan(`${appName}/`)} from ${chalk.cyan(
+        path.resolve(root, '..')
+      )}`
+    );
+    process.chdir(path.resolve(root, '..'));
+    fs.removeSync(path.join(root));
+  }
+  console.log('Done.');
+  process.exit(1);
+}
+
 // ADDED FOR FUSE-BOX-CREATE-REACT-APP TO INSTALL CUSTOM TEMPLATES FROM NPM
 function prerun(
   root,
@@ -296,50 +334,49 @@ function prerun(
   if (template) {
     console.log('Getting template ' + chalk.cyan(template) + '...');
 
-    install(
-      template,
-      useYarn,
-      null,
-      verbose,
-      checkIfOnline(useYarn),
-      true
-    ).then(() => {
-      let packagePath = path.resolve(process.cwd(), 'package.json');
+    install(root, useYarn, [template], verbose, checkIfOnline(useYarn), true)
+      .then(() => {
+        let packagePath = path.resolve(process.cwd(), 'package.json');
 
-      let packageJson = require(packagePath);
-      let templatePackage = Object.keys(
-        require(packagePath).devDependencies
-      )[0];
+        let templatePackage = Object.keys(
+          require(packagePath).devDependencies
+        )[0];
 
-      // rewrite without devDependencies
+        /*   // rewrite without devDependencies
       delete packageJson['devDependencies'];
 
       fs.writeFileSync(
         path.join(packagePath),
         JSON.stringify(packageJson, null, 2)
-      );
+      );*/
 
-      // do not cache as we will be adding to package.json
-      delete require.cache[require.resolve(packagePath)];
+        // do not cache as we will be adding to package.json
+        delete require.cache[require.resolve(packagePath)];
 
-      let pathToTemplate = path.relative(
-        originalDirectory,
-        path.resolve(process.cwd(), 'node_modules', templatePackage, 'template')
-      );
+        let pathToTemplate = path.relative(
+          originalDirectory,
+          path.resolve(
+            process.cwd(),
+            'node_modules',
+            templatePackage,
+            'template'
+          )
+        );
 
-      console.log('Installed template ' + chalk.cyan(templatePackage) + '.');
-      console.log();
+        console.log('Installed template ' + chalk.cyan(templatePackage) + '.');
+        console.log();
 
-      run(
-        root,
-        appName,
-        version,
-        verbose,
-        originalDirectory,
-        pathToTemplate,
-        useYarn
-      );
-    });
+        run(
+          root,
+          appName,
+          version,
+          verbose,
+          originalDirectory,
+          pathToTemplate,
+          useYarn
+        );
+      })
+      .catch(reason => abort(root, appName, reason));
   } else run(root, appName, version, verbose, originalDirectory, null, useYarn);
 }
 
@@ -407,43 +444,7 @@ function run(
       const init = require(scriptsPath);
       init(root, appName, verbose, originalDirectory, template);
     })
-    .catch(reason => {
-      console.log();
-      console.log('Aborting installation.');
-      if (reason.command) {
-        console.log(`  ${chalk.cyan(reason.command)} has failed.`);
-      } else {
-        console.log(chalk.red('Unexpected error. Please report it as a bug:'));
-        console.log(reason);
-      }
-      console.log();
-
-      // On 'exit' we will delete these files from target directory.
-      const knownGeneratedFiles = ['package.json', 'node_modules', 'yarn.lock'];
-      const currentFiles = fs.readdirSync(path.join(root));
-      currentFiles.forEach(file => {
-        knownGeneratedFiles.forEach(fileToMatch => {
-          // This remove all of knownGeneratedFiles.
-          if (file === fileToMatch) {
-            console.log(`Deleting generated file... ${chalk.cyan(file)}`);
-            fs.removeSync(path.join(root, file));
-          }
-        });
-      });
-      const remainingFiles = fs.readdirSync(path.join(root));
-      if (!remainingFiles.length) {
-        // Delete target folder if empty
-        console.log(
-          `Deleting ${chalk.cyan(`${appName}/`)} from ${chalk.cyan(
-            path.resolve(root, '..')
-          )}`
-        );
-        process.chdir(path.resolve(root, '..'));
-        fs.removeSync(path.join(root));
-      }
-      console.log('Done.');
-      process.exit(1);
-    });
+    .catch(reason => abort(root, appName, reason));
 }
 
 function getInstallPackage(version, originalDirectory) {

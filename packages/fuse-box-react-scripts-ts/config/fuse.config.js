@@ -1,17 +1,14 @@
-// @remove-on-eject-begin
 /**
  * Copyright (c) 2018-present, OffGrid Networks
- *  ADDED FOR FUSE-BOX-REACT-SCRIPTS
  *
  * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
+ * LICENSE file of npm fuse-box-create-react-app
  */
-// @remove-on-eject-end
 const {
   FuseBox,
   EnvPlugin,
   SVGPlugin,
-  /* LESSPlugin, */
+  /* LESSPlugin, Add LESS, SASS, etc here if needed */
   CSSPlugin,
   JSONPlugin,
   QuantumPlugin,
@@ -34,7 +31,7 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
       plugins: [
         EnvPlugin(env),
         SVGPlugin(),
-        /* [LESSPlugin(), CSSPlugin()], */
+        /* [LESSPlugin(), CSSPlugin()],  Add LESS, SASS, etc here if needed */
         CSSPlugin(),
         JSONPlugin(),
         WebIndexPlugin({
@@ -42,23 +39,19 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
           path: './',
         }),
         isProduction &&
+          false &&
           QuantumPlugin({ removeExportsInterop: false, uglify: true }),
       ],
     });
-    vendor = fuse.bundle('vendor').instructions('~ index.js');
-    app = fuse.bundle('app').instructions('!> [index.js]');
-    /* app = fuse
-      .bundle('app')
-      .instructions('> index.js'); */
+    vendor = fuse.bundle('vendor').instructions('~ index.tsx');
+    app = fuse.bundle('app').instructions('!> [index.tsx]');
+    /* Replace above two lines with below if single bundle preferred
+        app = fuse
+       .bundle('app')
+       .instructions('> index.tsx');   */
   });
 
   Sparky.task('default', () => null);
-
-  Sparky.task('dev', ['clean', 'config', 'static'], async () => {
-    fuse.dev({ port: port });
-    app.watch().hmr();
-    await fuse.run();
-  });
 
   Sparky.task('static', () => {
     const watchPaths = Array.isArray(paths.appPublic)
@@ -84,9 +77,52 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
     isProduction = true;
   });
 
-  Sparky.task('dist', ['prod-env', 'config', 'static'], async () => {
-    await fuse.run();
+  Sparky.task('dev', ['clean', 'config', 'static'], async () => {
+    fuse.dev({ port: port });
+    app.watch().hmr();
+    return fuseRun();
   });
+
+  Sparky.task('dist', ['prod-env', 'config', 'static'], () => {
+    return new Promise((resolve, reject) => {
+      let _error = console.error;
+      let errors = false;
+
+      console.error = function() {
+        errors = true;
+        _error(...arguments);
+        setTimeout(() => {
+          reject(new Error('Build errors occurred'));
+        }, 2000);
+      };
+
+      return fuseRun();
+    });
+  });
+
+  /** 
+   * Helper function to run FuseBox with automatic build error trapping
+   * */
+  function fuseRun() {
+    return new Promise((resolve, reject) => {
+      let _error = console.error;
+      let errors = false;
+
+      console.error = function() {
+        errors = true;
+        _error(...arguments);
+        setTimeout(() => {
+          reject(new Error('Build errors occurred'));
+        }, 2000);
+      };
+
+      return fuse.run().then(() => {
+        console.error = _error;
+        if (errors) return reject(new Error('Build errors occurred'));
+        resolve(true);
+      });
+    });
+  }
 
   return {
     start: function(tname) {

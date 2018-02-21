@@ -15,6 +15,7 @@ var spawnSync = require('cross-spawn').sync;
 var chalk = require('chalk');
 var green = chalk.green;
 var cyan = chalk.cyan;
+const os = require('os');
 
 inquirer
   .prompt({
@@ -49,42 +50,67 @@ inquirer
       }
     }
 
-    var folders = ['config'];
+    var folder = 'config';
+    verifyAbsent(folder);
 
-    var files = [path.join('config', 'fuse.config.js')];
+    var fuseConfigFile = 'fuse.config.js';
+    var fuseConfigPath = path.resolve(__dirname, '../config', fuseConfigFile);
+    var targetPath = path.join(appPath, folder);
+
+    // OVERRIDE WITH LOCAL PACKAGE VERSION IF IT EXISTS
+    if (fs.existsSync(path.join(paths.appConfig, fuseConfigFile)))
+      fuseConfigPath = path.join(paths.appConfig, fuseConfigFile);
 
     // Ensure that the app folder is clean and we won't override any files
-    folders.forEach(verifyAbsent);
-    files.forEach(verifyAbsent);
 
     // Copy the files over
-    folders.forEach(function(folder) {
-      fs.mkdirSync(path.join(appPath, folder));
-    });
+    fs.mkdirSync(targetPath);
 
     console.log();
-    console.log(cyan('Copying files into ' + appPath));
-    files.forEach(function(file) {
-      console.log('  Adding ' + cyan(file) + ' to the project');
-      var content =
-        fs
-          .readFileSync(path.join(ownPath, file), 'utf8')
-          // Remove dead code from .js files on eject
-          .replace(
-            /\/\/ @remove-on-eject-begin([\s\S]*?)\/\/ @remove-on-eject-end/gm,
-            ''
-          )
-          // Remove dead code from .applescript files on eject
-          .replace(
-            /-- @remove-on-eject-begin([\s\S]*?)-- @remove-on-eject-end/gm,
-            ''
-          )
-          .trim() + '\n';
-      fs.writeFileSync(path.join(appPath, file), content);
-    });
+    console.log(cyan('Copying file into ' + targetPath));
+
+    console.log('  Adding ' + cyan(fuseConfigPath) + ' to the project');
+    var content =
+      fs
+        .readFileSync(fuseConfigPath, 'utf8')
+        // Remove dead code from .js files on eject
+        .replace(
+          /\/\/ @remove-on-eject-begin([\s\S]*?)\/\/ @remove-on-eject-end/gm,
+          ''
+        )
+        // Remove dead code from .applescript files on eject
+        .replace(
+          /-- @remove-on-eject-begin([\s\S]*?)-- @remove-on-eject-end/gm,
+          ''
+        )
+        .trim() + '\n';
+    fs.writeFileSync(path.join(targetPath, fuseConfigFile), content);
+
+    const appPackage = require(path.join(appPath, 'package.json'));
+
+    if (appPackage.directories && appPackage.directories.config) {
+      console.log(
+        `  Resetting ${cyan('config')} in package.json ${cyan(
+          'directories'
+        )} to default`
+      );
+      appPackage.directories.config = 'config';
+
+      fs.writeFileSync(
+        path.join(appPath, 'package.json'),
+        JSON.stringify(appPackage, null, 2) + os.EOL
+      );
+    }
+
     console.log();
     console.log(green('Ejected successfully!'));
     console.log();
 
     console.log();
+  })
+  .catch(err => {
+    if (err && err.message) {
+      console.log(err.message);
+    }
+    process.exit(1);
   });

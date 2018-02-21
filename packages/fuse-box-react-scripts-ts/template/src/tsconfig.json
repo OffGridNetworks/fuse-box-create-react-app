@@ -11,7 +11,7 @@
         "noImplicitAny": false,
         "noImplicitUseStrict": false,
         "removeComments": true,
-        "importHelpers": false,
+        "importHelpers": true,
         "noLib": false,
         "noEmitHelpers": true,
         "preserveConstEnums": true,

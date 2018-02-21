@@ -1,7 +1,7 @@
 // @remove-on-eject-begin
 /**
  * Copyright (c) 2015-present, Facebook, Inc.
- * UNCHANGED FROM FACEBOOK VERSION IN FUSE-BOX-REACT-SCRIPTS
+ * Portions Copyright (c) 2016-present, OffGrid Networks
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -21,15 +21,11 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
-// Ensure environment variables are read.
-require('../config/env');
-// @remove-on-eject-begin
-// Do the preflight check (only happens before eject).
-const verifyPackageTree = require('./utils/verifyPackageTree');
-if (process.env.SKIP_PREFLIGHT_CHECK !== 'true') {
-  verifyPackageTree();
-}
-// @remove-on-eject-end
+// Load environment variables from .env file. Suppress warnings using silent
+// if this file is missing. dotenv will never modify any environment variables
+// that have already been set.
+// https://github.com/motdotla/dotenv
+require('dotenv').config({ silent: true });
 
 const jest = require('jest');
 const argv = process.argv.slice(2);
@@ -59,4 +55,5 @@ argv.push(
   )
 );
 // @remove-on-eject-end
+
 jest.run(argv);

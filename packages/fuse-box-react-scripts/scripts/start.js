@@ -141,7 +141,6 @@ function run(port) {
     })
     .catch(function(err) {
       console.log('Failed during development hosting');
-      console.log(err);
       process.exit(1);
     });
 }

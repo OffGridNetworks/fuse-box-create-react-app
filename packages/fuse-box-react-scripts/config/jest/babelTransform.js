@@ -9,10 +9,7 @@
 'use strict';
 
 const babelJest = require('babel-jest');
+const babelConfig = require('../fuse.config.js').babelConfig;
+const paths = require('../paths.js');
 
-module.exports = babelJest.createTransformer({
-  presets: [require.resolve('babel-preset-react-app')],
-  // @remove-on-eject-begin
-  babelrc: false,
-  // @remove-on-eject-end
-});
+module.exports = babelJest.createTransformer(babelConfig(paths, false, true));
