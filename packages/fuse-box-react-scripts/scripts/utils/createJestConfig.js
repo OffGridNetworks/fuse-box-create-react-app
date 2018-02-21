@@ -29,8 +29,8 @@ module.exports = (resolve, rootDir, srcRoots) => {
     setupFiles: [resolve('config/polyfills.js')],
     setupTestFrameworkScriptFile: setupTestsFile,
     testMatch: [
-      '**/__tests__/**/*.{js,jsx,mjs}',
-      '**/?(*.)(spec|test).{js,jsx,mjs}',
+      '**/__tests__/**/*.{js,jsx,mjs,ts,tsx}',
+      '**/?(*.)(spec|test).{js,jsx,mjs,ts,tsx}',
     ],
     // where to search for files/tests
     roots: srcRoots.map(toRelRootDir),
@@ -38,6 +38,7 @@ module.exports = (resolve, rootDir, srcRoots) => {
     testURL: 'http://localhost',
     transform: {
       '^.+\\.(js|jsx|mjs)$': resolve('config/jest/babelTransform.js'),
+      '\\.(jsx?|tsx?)$': resolve('config/jest/tsTransform.js'),
       '^.+\\.css$': resolve('config/jest/cssTransform.js'),
       '^.+\\.(graphql)$': resolve('config/jest/graphqlTransform.js'),
       '^(?!.*\\.(js|jsx|mjs|css|json|graphql)$)': resolve(
@@ -45,7 +46,7 @@ module.exports = (resolve, rootDir, srcRoots) => {
       ),
     },
     transformIgnorePatterns: [
-      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs)$',
+      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|ts|tsx)$',
       '^.+\\.module\\.css$',
     ],
     moduleNameMapper: {
@@ -60,6 +61,8 @@ module.exports = (resolve, rootDir, srcRoots) => {
       'web.jsx',
       'jsx',
       'node',
+      'ts',
+      'tsx',
     ],
   };
   if (rootDir) {
