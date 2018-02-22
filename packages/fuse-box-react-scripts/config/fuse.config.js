@@ -84,7 +84,11 @@ exports.initBuilder = function({
       sourceMaps: isProduction ? false : { project: true, vendor: false },
       hash: isProduction && !component && !componentdocs,
       cache: !isProduction,
-      output: path.join(targetDir, paths.Bundle, '$name.js'),
+      output: path.join(
+        targetDir,
+        componentdocs ? paths.Bundle : '',
+        '$name.js'
+      ),
       target: isProduction ? 'browser@es5' : 'browser@es2015',
       plugins: [
         EnvPlugin(env),
@@ -111,7 +115,7 @@ exports.initBuilder = function({
         .instructions('> __stories__/.storybook/index.js');
       app = fuse.bundle('preview').instructions('> __stories__/index.js');
     } else if (component) {
-      app = fuse.bundle('components').instructions('!> [index.js]');
+      app = fuse.bundle('index').instructions('!> [index.js]');
     } else {
       vendor = fuse.bundle('vendor').instructions('~ index.js');
       app = fuse.bundle('app').instructions('!> [index.js]');
@@ -141,7 +145,7 @@ exports.initBuilder = function({
   });
 
   Sparky.task('dev', ['config', 'static'], async () => {
-    fuse.dev({ port: port });
+    fuse.dev({ port: port, root: targetDir });
     app.watch().hmr();
     return fuseRun();
   });

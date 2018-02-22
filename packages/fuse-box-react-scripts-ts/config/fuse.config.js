@@ -41,7 +41,11 @@ exports.initBuilder = function({
       sourceMaps: isProduction ? false : { project: true, vendor: false },
       hash: isProduction && !component && !componentdocs,
       cache: !isProduction,
-      output: path.join(targetDir, paths.Bundle, '$name.js'),
+      output: path.join(
+        targetDir,
+        componentdocs ? paths.Bundle : '',
+        '$name.js'
+      ),
       target: isProduction ? 'browser@es5' : 'browser@es2015',
       plugins: [
         EnvPlugin(env),
@@ -69,7 +73,7 @@ exports.initBuilder = function({
     } else if (component) {
       app = fuse.bundle('components').instructions('!> [index.tsx]');
     } else {
-      vendor = fuse.bundle('vendor').instructions('~ index.js');
+      vendor = fuse.bundle('vendor').instructions('~ index.tsx');
       app = fuse.bundle('app').instructions('!> [index.tsx]');
       /* Replace above two lines with below if single bundle preferred
           app = fuse
@@ -97,7 +101,7 @@ exports.initBuilder = function({
   });
 
   Sparky.task('dev', ['config', 'static'], async () => {
-    fuse.dev({ port: port });
+    fuse.dev({ port: port, root: targetDir });
     app.watch().hmr();
     return fuseRun();
   });
