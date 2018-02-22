@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-component-template",
-  "version": "3.0.70",
+  "version": "3.0.71",
   "keywords": [
     "react",
     "fuse-box"
@@ -33,6 +33,6 @@
     "babel-jest": "22.4.0"
   },
   "devDependencies": {
-    "fuse-box-react-scripts": "^3.0.70"
+    "fuse-box-react-scripts": "^3.0.71"
   }
 }
