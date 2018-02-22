@@ -81,13 +81,11 @@ exports.initBuilder = function({
   Sparky.task('default', () => null);
 
   Sparky.task('static', () => {
-    const watchPaths = Array.isArray(paths.appPublic)
-      ? paths.appPublic.map(pathPublic => pathPublic + '/**/*')
-      : paths.appPublic + '/**/*';
+    const watchPaths = Array.isArray(staticDirs)
+      ? staticDirs.map(pathPublic => pathPublic + '/**/*')
+      : staticDirs + '/**/*';
 
-    const publicArray = Array.isArray(paths.appPublic)
-      ? paths.appPublic
-      : [paths.appPublic];
+    const publicArray = Array.isArray(staticDirs) ? staticDirs : [staticDirs];
 
     return Sparky.watch(watchPaths).file(``, file => {
       let root = publicArray.find(

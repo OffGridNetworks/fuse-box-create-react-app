@@ -13,6 +13,19 @@
 process.env.BABEL_ENV = 'production';
 process.env.NODE_ENV = 'production';
 
+const path = require('path');
+const chalk = require('chalk');
+const fs = require('fs-extra');
+
+const paths = require('../config/paths');
+
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
+const printBuildError = require('react-dev-utils/printBuildError');
+const { printBrowsers } = require('./utils/browsersHelper');
+
+const buildcommon = require('./utils/build-common');
+
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
@@ -40,19 +53,6 @@ if (process.env.SKIP_PREFLIGHT_CHECK !== 'true') {
   verifyPackageTree();
 }
 // @remove-on-eject-end
-
-const path = require('path');
-const chalk = require('chalk');
-const fs = require('fs-extra');
-
-const paths = require('../config/paths');
-
-const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-const printHostingInstructions = require('react-dev-utils/printHostingInstructions');
-const printBuildError = require('react-dev-utils/printBuildError');
-const { printBrowsers } = require('./utils/browsersHelper');
-
-const buildcommon = require('./utils/build-common');
 
 // Facebook CRA recommends-requires that you explictly set browsers and do not fall back to
 // browserslist defaults.
