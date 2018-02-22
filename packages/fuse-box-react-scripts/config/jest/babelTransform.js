@@ -12,4 +12,4 @@ const babelJest = require('babel-jest');
 const babelConfig = require('../fuse.config.js').babelConfig;
 const paths = require('../paths.js');
 
-module.exports = babelJest.createTransformer(babelConfig(paths, false, true));
+module.exports = babelJest.createTransformer(babelConfig({ paths }));

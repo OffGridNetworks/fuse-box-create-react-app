@@ -1,12 +1,3 @@
-// @remove-on-eject-begin
-/**
- * Copyright (c) 2015-present, Facebook, Inc.
- * Portions Copyright (c) 2016-present, OffGrid Networks
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-// @remove-on-eject-end
 'use strict';
 
 const path = require('path');
@@ -62,6 +53,15 @@ function resolveAppPackageDirectoryOrNull(key) {
   else return null;
 }
 
+function getPackageDirectoryLast(key, defaultdir) {
+  var directories = packageJson.directories;
+  if (directories && directories[key]) {
+    if (Array.isArray(directories[key]))
+      return directories[key][directories[key].length - 1];
+    else return directories[key];
+  } else return defaultdir || key;
+}
+
 function resolveAppArray(pathitem) {
   if (Array.isArray(pathitem)) {
     var result = [];
@@ -85,6 +85,9 @@ module.exports = {
   appHtml: function(file) {
     return resolveApp(path.join(getPackageDirectory('src'), file));
   } /* FUSE-BOX */,
+  appHtmlComponent: function(file) {
+    return resolveApp(path.join(getPackageDirectoryLast('public'), file));
+  },
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp(getPackageDirectory('src')) /* FUSE-BOX */,
   testsSetup: resolveApp(
@@ -100,13 +103,17 @@ module.exports = {
     ''
   ) /* FUSE-BOX */,
   appConfig: resolveApp(getPackageDirectory('config')) /* FUSE-BOX */,
-  appStoriesJs: resolveAppPackageDirectoryOrNull('stories-js') /* FUSE-BOX */,
-  appStoriesBuild: resolveApp(
-    getPackageDirectory('stories-build', 'build-storybook')
+  appDocsJs: resolveAppPackageDirectoryOrNull('docs-js') /* FUSE-BOX */,
+  appDocsBuild: resolveApp(
+    getPackageDirectory('docs-build', 'dist-docs')
+  ) /* FUSE-BOX */,
+  appDocsPublic: resolveAppArray(
+    getPackageDirectory('docs-public', getPackageDirectory('public'))
   ) /* FUSE-BOX */,
   yarnLockFile: resolveApp('yarn.lock') /* FUSE-BOX */,
   appDirectory: appDirectory /* FUSE-BOX */,
   ownPath: resolveOwn('.'),
+  appPackageDirectory: key => resolveAppArray(getPackageDirectory(key)),
 };
 
 module.exports.srcPaths = [module.exports.appSrc];

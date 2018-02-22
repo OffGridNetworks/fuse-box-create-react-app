@@ -1,15 +1,12 @@
 {
-  "devDependencies": {
-    "@kadira/storybook": "^2.35.3"
-  },
   "directories": {
-    "stories-js": "src/__stories__/.storybook",
-    "build": "dist",
-    "stories-build": "dist-storybook",
+    "docs-js": "src/__stories__/.storybook",
+    "docs-build": "dist-storybook",
+    "docs-public": "src/__stories__/public",
     "bundle": "js",
+    "build" : "dist",
     "public": [
-      "src/public",
-      "src/__stories__/public"
+      "src/public"
     ]
   },
   "scripts": {

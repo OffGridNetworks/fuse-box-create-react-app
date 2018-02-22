@@ -52,6 +52,8 @@ const envinfo = require('envinfo');
 const os = require('os');
 const packageJson = require('./package.json');
 
+const defaultTemplate = process.env.REACT_SCRIPTS_TEMPLATE;
+
 // These files should be allowed to remain on a failed install,
 // but then silently removed during the next create.
 const errorLogFilePatterns = [
@@ -210,8 +212,15 @@ function createApp(name, verbose, version, useNpm, template) {
       }
     }
   }
-  // run(root, appName, version, verbose, originalDirectory, template, useYarn);
-  prerun(root, appName, version, verbose, originalDirectory, template, useYarn);
+  prerun(
+    root,
+    appName,
+    version,
+    verbose,
+    originalDirectory,
+    template || defaultTemplate,
+    useYarn
+  );
 }
 
 function isYarnAvailable() {

@@ -1,6 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import ComponentA from './ComponentA';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import ComponentA from './index';
 
 it('renders without crashing', () => {
   const div = document.createElement('div');

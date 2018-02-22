@@ -1,3 +1,2 @@
-require('@kadira/storybook/dist/client/manager');
-
+require('@storybook/react/dist/client/manager');
 import './addons';

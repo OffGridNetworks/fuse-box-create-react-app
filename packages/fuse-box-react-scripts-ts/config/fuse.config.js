@@ -4,6 +4,7 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file of npm fuse-box-create-react-app
  */
+
 const {
   FuseBox,
   EnvPlugin,
@@ -17,16 +18,30 @@ const {
 } = require('fuse-box');
 
 const path = require('path');
-let fuse, app, vendor, isProduction, isTest;
 
-exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
+exports.initBuilder = function({
+  paths,
+  srcDir,
+  targetDir,
+  staticDirs,
+  port,
+  env,
+  component,
+  componentdocs,
+}) {
+  let fuse, app, vendor;
+
+  const isProduction = process.env.NODE_ENV == 'production';
+  const isTest = process.env.NODE_ENV == 'test';
+  const isDevelopment = process.env.NODE_ENV == 'development';
+
   Sparky.task('config', () => {
     fuse = new FuseBox({
       homeDir: srcDir,
       sourceMaps: isProduction ? false : { project: true, vendor: false },
-      hash: isProduction,
+      hash: isProduction && !component && !componentdocs,
       cache: !isProduction,
-      output: path.join(targetDir, '$name.js'),
+      output: path.join(targetDir, paths.Bundle, '$name.js'),
       target: isProduction ? 'browser@es5' : 'browser@es2015',
       plugins: [
         EnvPlugin(env),
@@ -34,20 +49,33 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
         /* [LESSPlugin(), CSSPlugin()],  Add LESS, SASS, etc here if needed */
         CSSPlugin(),
         JSONPlugin(),
-        WebIndexPlugin({
-          template: path.join(srcDir, 'index.html'),
-          path: './',
-        }),
+        !component &&
+          !componentdocs &&
+          WebIndexPlugin({
+            template: path.join(srcDir, 'index.html'),
+            path: './',
+          }),
         isProduction &&
+          !component &&
+          !componentdocs &&
           QuantumPlugin({ removeExportsInterop: false, uglify: true }),
       ],
     });
-    vendor = fuse.bundle('vendor').instructions('~ index.tsx');
-    app = fuse.bundle('app').instructions('!> [index.tsx]');
-    /* Replace above two lines with below if single bundle preferred
-        app = fuse
-       .bundle('app')
-       .instructions('> index.tsx');   */
+    if (componentdocs) {
+      vendor = fuse
+        .bundle('manager')
+        .instructions('> __stories__/.storybook/index.js');
+      app = fuse.bundle('preview').instructions('> __stories__/index.ts');
+    } else if (component) {
+      app = fuse.bundle('components').instructions('!> [index.tsx]');
+    } else {
+      vendor = fuse.bundle('vendor').instructions('~ index.js');
+      app = fuse.bundle('app').instructions('!> [index.tsx]');
+      /* Replace above two lines with below if single bundle preferred
+          app = fuse
+         .bundle('app')
+         .instructions('> index.tsx');   */
+    }
   });
 
   Sparky.task('default', () => null);
@@ -70,19 +98,13 @@ exports.initBuilder = function({ paths, srcDir, targetDir, port, env }) {
     });
   });
 
-  Sparky.task('clean', () => Sparky.src(targetDir).clean(targetDir));
-
-  Sparky.task('prod-env', ['clean'], () => {
-    isProduction = true;
-  });
-
-  Sparky.task('dev', ['clean', 'config', 'static'], async () => {
+  Sparky.task('dev', ['config', 'static'], async () => {
     fuse.dev({ port: port });
     app.watch().hmr();
     return fuseRun();
   });
 
-  Sparky.task('dist', ['prod-env', 'config', 'static'], () => {
+  Sparky.task('dist', ['config', 'static'], () => {
     return fuseRun();
   });
 

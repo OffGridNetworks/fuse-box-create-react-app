@@ -26,6 +26,13 @@ process.on('unhandledRejection', err => {
 // https://github.com/motdotla/dotenv
 require('dotenv').config({ silent: true });
 
+const isComponent = paths.appDocsJs ? true : false;
+
+// Warn and crash if required files are missing
+if (!isComponent && !checkRequiredFiles([paths.appHtml('index.html')])) {
+  process.exit(1);
+}
+
 // @remove-on-eject-begin
 // Do the preflight check (only happens before eject).
 const verifyPackageTree = require('./utils/verifyPackageTree');
@@ -45,24 +52,13 @@ const printHostingInstructions = require('react-dev-utils/printHostingInstructio
 const printBuildError = require('react-dev-utils/printBuildError');
 const { printBrowsers } = require('./utils/browsersHelper');
 
-const buildcommon = require('./build-common');
-
-// Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml('index.html')])) {
-  process.exit(1);
-}
+const buildcommon = require('./utils/build-common');
 
 // Facebook CRA recommends-requires that you explictly set browsers and do not fall back to
 // browserslist defaults.
 const { checkBrowsers } = require('./utils/browsersHelper');
 checkBrowsers(paths.appPath)
   .then(() => {
-    // Remove all content but keep the directory so that
-    // if you're in it, you don't end up in Trash
-    fs.emptyDirSync(paths.appBuild);
-
-    if (paths.appStoriesJs) fs.emptyDirSync(paths.appStoriesBuild);
-
     // Start the Fuse-Box build
     return build();
   })
@@ -80,22 +76,28 @@ checkBrowsers(paths.appPath)
       const publicUrl = paths.publicUrl;
       const publicPath = paths.appBuild;
       const buildFolder = path.relative(process.cwd(), paths.appBuild);
+      const buildFolderDocs = paths.appDocsJs
+        ? path.relative(process.cwd(), paths.appDocsBuild)
+        : path.relative(process.cwd(), paths.appBuild);
+
       printHostingInstructions(
         appPackage,
         publicUrl,
         publicPath,
-        buildFolder,
+        buildFolderDocs,
         paths.useYarn
       );
 
-      console.log('You may also serve it locally with a static server:');
+      console.log('You may serve it locally with a static server:');
       console.log();
       if (paths.useYarn) {
         console.log('  ' + chalk.cyan('yarn') + ' global add pushstate-server');
       } else {
         console.log('  ' + chalk.cyan('npm') + ' install -g pushstate-server');
       }
-      console.log('  ' + chalk.cyan('pushstate-server') + ' ' + buildFolder);
+      console.log(
+        '  ' + chalk.cyan('pushstate-server') + ' ' + buildFolderDocs
+      );
 
       console.log(
         '  ' +
@@ -104,12 +106,21 @@ checkBrowsers(paths.appPath)
       );
       console.log();
 
+      if (buildFolder !== buildFolderDocs) {
+        console.log(
+          'The code bundle can be deployed from folder ' +
+            chalk.cyan(buildFolder) +
+            '.'
+        );
+        console.log();
+      }
+
       printBrowsers(paths.appPath);
       setTimeout(process.exit, 500);
     },
     err => {
       console.log(chalk.red('Failed to compile.\n'));
-      //   printBuildError(err);
+      console.log(err);
       process.exit(1);
     }
   )
@@ -122,41 +133,27 @@ checkBrowsers(paths.appPath)
 
 // Primary Build function for Create-React-App
 function buildApp() {
+  fs.emptyDirSync(paths.appBuild);
+
   return buildcommon.initBuilder({}).start('dist');
 }
 
 // Alternative Build function for Create-React-Component
-function buildStoriesComponent() {
+function buildComponent() {
+  fs.emptyDirSync(paths.appDocsBuild);
+  fs.emptyDirSync(paths.appBuild);
+
   return buildcommon
-    .buildBabel(paths.appSrc, paths.appBuild)
-    .then(function(val) {
+    .initBuilder({ component: true })
+    .start('dist')
+    .then(() => {
       return buildcommon
-        .initBuilder(
-          'manager',
-          paths.appStoriesJs,
-          path.join(paths.appStoriesBuild, paths.Bundle)
-        )
-        .bundle('>index.js')
-        .then(function(val) {
-          if (!val) return val;
-          return buildcommon
-            .initBuilder(
-              'stories',
-              paths.appSrc,
-              path.join(paths.appStoriesBuild, paths.Bundle)
-            )
-            .bundle('>__stories__/index.js');
+        .initBuilder({
+          componentdocs: true,
+          staticDirs: paths.appDocsPublic,
+          targetDir: paths.appDocsBuild,
         })
-        .then(function(val) {
-          if (!val) return val;
-
-          buildcommon.copyStaticFolder(
-            { 'index.html': 'manager', 'iframe.html': 'stories' },
-            paths.appStoriesBuild
-          );
-
-          return val;
-        });
+        .start('dist');
     });
 }
 
@@ -164,7 +161,7 @@ function buildStoriesComponent() {
 function build() {
   console.log('Creating an optimized production build...');
 
-  var builder = paths.appStoriesJs ? buildStoriesComponent : buildApp;
+  var builder = isComponent ? buildComponent : buildApp;
 
   return builder();
 }

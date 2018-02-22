@@ -26,6 +26,29 @@ process.on('unhandledRejection', err => {
   throw err;
 });
 
+const chalk = require('chalk');
+const clearConsole = require('react-dev-utils/clearConsole');
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const detect = require('detect-port');
+const getProcessForPort = require('react-dev-utils/getProcessForPort');
+const fs = require('fs-extra');
+const path = require('path');
+const inquirer = require('react-dev-utils/inquirer');
+
+const openBrowser = require('react-dev-utils/openBrowser');
+const paths = require('../config/paths');
+
+var buildcommon = require('./utils/build-common');
+
+const isInteractive = process.stdout.isTTY;
+
+const isComponent = paths.appDocsJs ? true : false;
+
+// Warn and crash if required files are missing
+if (!isComponent && !checkRequiredFiles([paths.appHtml('index.html')])) {
+  process.exit(1);
+}
+
 // @remove-on-eject-begin
 // Do the preflight check (only happens before eject).
 const verifyPackageTree = require('./utils/verifyPackageTree');
@@ -33,26 +56,6 @@ if (process.env.SKIP_PREFLIGHT_CHECK !== 'true') {
   verifyPackageTree();
 }
 // @remove-on-eject-end
-
-const chalk = require('chalk');
-const clearConsole = require('react-dev-utils/clearConsole');
-const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-const detect = require('detect-port');
-const getProcessForPort = require('react-dev-utils/getProcessForPort');
-const fs = require('fs-extra');
-const inquirer = require('react-dev-utils/inquirer');
-
-const openBrowser = require('react-dev-utils/openBrowser');
-const paths = require('../config/paths');
-
-var buildcommon = require('./build-common');
-
-const isInteractive = process.stdout.isTTY;
-
-// Warn and crash if required files are missing
-if (!checkRequiredFiles([paths.appHtml('index.html')])) {
-  process.exit(1);
-}
 
 // Tools like Cloud9 rely on this.
 const DEFAULT_PORT = parseInt(process.env.PORT, 10) || 3000;
@@ -77,44 +80,21 @@ if (process.env.HOST) {
 
 // Primary Build function for Fuse-Box-Create-React-App
 function buildApp(port) {
+  fs.emptyDirSync(paths.appBuild);
   return buildcommon.initBuilder({ port: port }).start('dev');
 }
 
-// Alternative Build function for Fuse-Box Create-React-Component
-function buildStoriesComponent(port) {
-  buildcommon.copyStaticFolder(
-    { 'index.html': 'manager', 'iframe.html': 'stories' },
-    paths.appStoriesBuild
-  );
-
+// Alternative Build function for Create-React-Component
+function buildComponent(port) {
+  fs.emptyDirSync(paths.appDocsBuild);
   return buildcommon
-    .initBuilder(
-      'manager',
-      paths.appStoriesJs,
-      path.join(paths.appStoriesBuild, paths.Bundle)
-    )
-    .bundle('>index.js')
-    .then(function(val) {
-      if (!val) return Promise.reject(val);
-
-      var server = buildcommon
-        .initBuilder(
-          'stories',
-          paths.appSrc,
-          path.join(paths.appStoriesBuild, paths.Bundle)
-        )
-        .devServer('>__stories__/index.js', {
-          port: port,
-          root: paths.appStoriesBuild,
-        });
-
-      server.httpServer.app.use(express.static(paths.appStoriesBuild));
-      server.httpServer.app.get('*', function(req, res) {
-        res.sendFile(path.join(paths.appStoriesBuild, 'index.html'));
-      });
-
-      return server;
-    });
+    .initBuilder({
+      port: port,
+      componentdocs: true,
+      staticDirs: paths.appDocsPublic,
+      targetDir: paths.appDocsBuild,
+    })
+    .start('dev');
 }
 
 function run(port) {
@@ -129,7 +109,7 @@ function run(port) {
 
   if (paths.appStoriesJs) fs.emptyDirSync(paths.appStoriesBuild);
 
-  var builder = paths.appStoriesJs ? buildStoriesComponent : buildApp;
+  var builder = isComponent ? buildComponent : buildApp;
 
   var server = builder(port)
     .then(function(server) {
@@ -141,6 +121,7 @@ function run(port) {
     })
     .catch(function(err) {
       console.log('Failed during development hosting');
+      console.log(err);
       process.exit(1);
     });
 }

@@ -39,6 +39,8 @@ if (
   argv.push('--watch');
 }
 
+jest.run(argv);
+
 // @remove-on-eject-begin
 // This is not necessary after eject because we embed config into package.json.
 const createJestConfig = require('./utils/createJestConfig');
