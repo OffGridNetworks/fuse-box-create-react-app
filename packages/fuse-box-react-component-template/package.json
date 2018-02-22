@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-component-template",
-  "version": "3.0.63",
+  "version": "3.0.64",
   "keywords": [
     "react",
     "fuse-box"
@@ -11,11 +11,14 @@
   "engines": {
     "node": ">=8"
   },
-  "devDependencies": {
+  "dependencies": {
     "@storybook/addon-actions": "3.3.14",
     "@storybook/addon-info": "3.3.14",
     "@storybook/addons": "3.3.14",
     "@storybook/react": "3.3.14",
     "fuse-box-react-scripts-babel": "^3.0.56"
+  },
+  "devDependencies": {
+    "fuse-box-react-scripts": "^3.0.64"
   }
 }
