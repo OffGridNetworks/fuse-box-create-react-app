@@ -1,4 +1,4 @@
-This project was bootstrapped with [Create React App](https://github.com/offgridnetworks/fuse-box-create-react-app).
+This project was bootstrapped with [Fuse-Box Create React App] for TypeScript(https://github.com/offgridnetworks/fuse-box-create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
 You can find the most recent version of this guide [here](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/packages/fuse-box-react-scripts/template/README.md).
@@ -110,12 +110,12 @@ You can find the most recent version of this guide [here](https://github.com/off
 
 Create React App is divided into two packages:
 
-* `create-react-app` is a global command-line utility that you use to create new projects.
-* `react-scripts` is a development dependency in the generated projects (including this one).
+* `fuse-box-create-react-app` is a global command-line utility that you use to create new projects.
+* `fuse-box-react-scripts` is a development dependency in the generated projects (including this one).
 
-You almost never need to update `create-react-app` itself: it delegates all the setup to `react-scripts`.
+You almost never need to update `fuse-box-create-react-app` itself: it delegates all the setup to `fuse-box-react-scripts`.
 
-When you run `create-react-app`, it always creates the project with the latest version of `react-scripts` so you’ll get all the new features and improvements in newly created apps automatically.
+When you run `fuse-box-create-react-app`, it always creates the project with the latest version of `fuse-box-react-scripts` so you’ll get all the new features and improvements in newly created apps automatically.
 
 To update an existing project to a new version of `react-scripts`, [open the changelog](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/CHANGELOG.md), find the version you’re currently on (check `package.json` in this folder if you’re not sure), and apply the migration instructions for the newer versions.
 
@@ -141,11 +141,12 @@ my-app/
     favicon.ico
   src/
     App.css
-    App.js
-    App.test.js
+    App.tsx
+    App.test.tsx
     index.css
-    index.js
+    index.tsx
     logo.svg
+  tsconfig.json
 ```
 
 For the project to build, **these files must exist with exact filenames**:
@@ -191,6 +192,17 @@ Your app is ready to be deployed!
 
 See the section about [deployment](#deployment) for more information.
 
+### `npm run ejectconfig`
+> this is an enhancement over original create-react-app
+
+**Note: this is a two-way operation. Once you `ejectconfig`, you can go back by deleting the config directory!**
+
+If you aren’t satisfied with the build tool and configuration choices, you can `ejectconfig` at any time. This command will not remove the single build dependency from your project.
+
+Instead, it will copy a configuration files into a new `config` folder of your project.  You can inspect it, change it, and just remove it if you want to go back to the default.
+
+You don’t have to ever use `ejectconfig`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it, and we think this two-way, one file configuration is a better option than the full `eject` below.
+
 ### `npm run eject`
 
 **Note: this is a one-way operation. Once you `eject`, you can’t go back!**
@@ -200,6 +212,22 @@ If you aren’t satisfied with the build tool and configuration choices, you can
 Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Package.json directories 
+> this is an enhancement over original create-react-app
+
+You can customize the package.json file with the standard `directories` entry;
+
+| Entry         | Description |
+| ------------- |-------------| 
+| `src` | the root of the folder containing the source code files to include in the bundle |  
+| `build`       | the output folder of the build, relative to package root | 
+| `public`   | single folder or array of folders to copy to root of output folder, with dev-server watch included | 
+| `config` | the folder where the config files are kept;  tip: can be in node-modules, makes templating simple |  
+| `docs-js` | the folder where the component docs e.g., storybook, catalog, styleguidist, is kept |  
+| `docs-build` | the output folder for the component docs e.g, storybook, catalog, styleguidist |  
+| `docs-public` | the folder where the static files are kept for the component docs |  
+| `bundle` | the folder prefix for bundle; currently used only for component docs (set to `js`) |  
 
 ## Supported Browsers
 

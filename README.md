@@ -1,4 +1,4 @@
-# FuseBox Create React App
+# Fuse-Box Create React App
 
 Create React apps and components with no build configuration, with [FuseBox](http://fuse-box.org).
 
@@ -11,12 +11,6 @@ Create React apps and components with no build configuration, with [FuseBox](htt
 * [User Guide](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/packages/fuse-box-react-scripts/template/README.md) – How to develop apps bootstrapped with Create React App.
 
 Create React App works on macOS, Windows, and Linux.  
-
-## Contributors
-
-This was a quick fork of Facebook's great work to use the very fast FuseBox transpiler. 
-
-If you'd like to take over the project please feel free to request as it's not on our long term roadmap, but there was a gap and we needed it!
 
 ## tl;dr
 
@@ -49,8 +43,6 @@ npm start
 ```
 
 or to create a re-usable React Component with demo pages already setup using React Storybook
-(NOT CURRENTLY WORKING)
-
 ```sh
 npm install -g fuse-box-create-react-app
 
@@ -62,6 +54,31 @@ npm start
 Then open [http://localhost:3000/](http://localhost:3000/) to see your app or component.<br>
 When you’re ready to deploy to production, create a minified bundle with `npm run build`.
 
+## Motivation
+
+Having a configuration-free build for creating React applications was made easy with the excellent [create-react-app](https://github.com/facebook/create-react-app).    However, builds can take a while on larger projects, and it was hard to do minor configuration changes such as adding in a LESS or SASS preprocessor, without ejecting the configuration.
+
+Also, the underlying builder create-react-app chose was actually the most configurable, which makes it complicated under the covers.  In its provided state it also takes a long time to build for large projects.   Thi
+
+This is a fork of that project that provides a more-configurable, yet still configuration-free experience for the default cases, and only one simple config file for most configuration use cases.
+
+## Features
+
+The enhancements provided by this fork include;
+- Very fast builds using fuse-box instead of webpack
+- Simple configuration (like additional directories to copy) included in package.json;  no additional files needed
+- Advanced configuration for experts provided with a new 'ejectconfig' command which still keeps current with all the latest build scripts, but allows one to override the fuse-box, babel, typescript configurations
+- First class support for templates with the `create-react-app --template npm-package-name-here` switch.   This automatically downloads the latest template from the npm repository and shares the same build scripts across all such templates
+- First class support for alternative transpilers, such as TypeScript, even substituting for Babel if desired
+- First class support for components as well as applications
+- Eliminates use of webpack even for libraries such as storybook;   fuse-box / babel or typescript handles it all
+
+## Contributors
+
+This was a quick fork of Facebook's great work to use the very fast FuseBox transpiler. 
+
+If you'd like to take over the project please feel free to request as it's not on our long term roadmap, but there was a gap and we needed it!
+
 ### Get Started Immediately
 
 You **don’t** need to install or configure tools like Webpack or Babel.<br>
@@ -71,12 +88,12 @@ Just create a project, and you’re good to go.
 
 ## Creating an App
 
-**You’ll need to have Node >= 6 on your local development machine** (but it’s not required on the server). You can use [nvm](https://github.com/creationix/nvm#installation) (macOS/Linux) or [nvm-windows](https://github.com/coreybutler/nvm-windows#node-version-manager-nvm-for-windows) to easily switch Node versions between different projects.
+**You’ll need to have Node >= 8 on your local development machine** (but it’s not required on the server). You can use [nvm](https://github.com/creationix/nvm#installation) (macOS/Linux) or [nvm-windows](https://github.com/coreybutler/nvm-windows#node-version-manager-nvm-for-windows) to easily switch Node versions between different projects.
 
 To create a new app, run a single command:
 
 ```sh
-npx create-react-app my-app
+npx fuse-box-create-react-app my-app
 ```
 
 *([npx](https://medium.com/@maybekatz/introducing-npx-an-npm-package-runner-55f7d4bd282b) comes with npm 5.2+ and higher, see [instructions for older npm versions](https://gist.github.com/gaearon/4064d3c23a77c74a3614c498a8bb1c5f))*
@@ -204,7 +221,7 @@ Please refer to the [User Guide](https://github.com/offgridnetworks/fuse-box-cre
 
 Your environment will have everything you need to build a modern single-page React app:
 
-* React, JSX, ES6, and Flow syntax support.
+* React, JSX, ES6, and optionally TypeScript syntax support.
 * Language extras beyond ES6 like the object spread operator.
 * Autoprefixed CSS, so you don’t need `-webkit-` or other prefixes.
 * A fast interactive unit test runner with built-in support for coverage reporting.
