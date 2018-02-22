@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-create-react-app",
-  "version": "3.0.58",
+  "version": "3.0.63",
   "keywords": [
     "react"
   ],
@@ -19,7 +19,9 @@
   ],
   "bin": {
     "fuse-box-create-react-app": "./index.js",
-    "create-react-app": "./index.js"
+    "create-react-app": "./index.js",
+    "create-react-component": "./component.js",
+    "fuse-box-create-react-component": "./component.js"
   },
   "dependencies": {
     "chalk": "^2.3.1",

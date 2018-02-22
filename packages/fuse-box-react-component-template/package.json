@@ -1,14 +1,21 @@
 {
   "name": "fuse-box-react-component-template",
-  "version": "3.0.29",
+  "version": "3.0.63",
   "keywords": [
     "react",
     "fuse-box"
   ],
   "description": "Create React components with no build configuration, with fuse-box.",
-  "repository": "offgridnetworks/fuse-box-react-component-template",
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/offgridnetworks/fuse-box-create-react-app/issues"
+  "repository": "offgridnetworks/fuse-box-create-react-app",
+  "license": "MIT",
+  "engines": {
+    "node": ">=8"
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "3.3.14",
+    "@storybook/addon-info": "3.3.14",
+    "@storybook/addons": "3.3.14",
+    "@storybook/react": "3.3.14",
+    "fuse-box-react-scripts-babel": "^3.0.56"
   }
 }
