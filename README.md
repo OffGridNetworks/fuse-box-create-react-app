@@ -58,7 +58,7 @@ When you’re ready to deploy to production, create a minified bundle with `npm 
 
 Having a configuration-free build for creating React applications was made easy with the excellent [create-react-app](https://github.com/facebook/create-react-app).    However, builds can take a while on larger projects, and it was hard to do minor configuration changes such as adding in a LESS or SASS preprocessor, without ejecting the configuration.
 
-Also, the underlying builder create-react-app chose was actually the most configurable, which makes it complicated under the covers.  In its provided state it also takes a long time to build for large projects.   Thi
+Also, the underlying builder create-react-app chose was actually the most configurable, which makes it complicated under the covers.  In its provided state it also takes a long time to build for large projects. 
 
 This is a fork of that project that provides a more-configurable, yet still configuration-free experience for the default cases, and only one simple config file for most configuration use cases.
 
