@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-scripts",
-  "version": "3.0.72",
+  "version": "3.0.74",
   "description": "Configuration and scripts for Fuse-Box Create React App.",
   "repository": "offgridnetworks/fuse-box-create-react-app",
   "license": "MIT",
@@ -41,8 +41,8 @@
     "whatwg-fetch": "^2.0.3"
   },
   "devDependencies": {
-    "fuse-box-react-scripts-babel": "^3.0.72",
-    "@babel/core": "^7.0.0-0"
+    "@babel/core": "^7.0.0-0",
+    "fuse-box-react-scripts-babel": "^3.0.74"
   },
   "optionalDependencies": {
     "fsevents": "1.1.3"
