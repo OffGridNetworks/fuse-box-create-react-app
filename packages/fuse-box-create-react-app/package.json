@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-create-react-app",
-  "version": "3.0.73",
+  "version": "3.0.76",
   "keywords": [
     "react"
   ],
@@ -15,6 +15,7 @@
   },
   "files": [
     "index.js",
+    "component.js",
     "createReactApp.js"
   ],
   "bin": {
