@@ -27,7 +27,7 @@ or using TypeScript
 ```sh
 npm install -g fuse-box-create-react-app
 
-create-react-app my-app-template fuse-box-react-scripts-ts
+create-react-app my-app --template fuse-box-react-scripts-ts
 cd my-app/
 npm start
 ```

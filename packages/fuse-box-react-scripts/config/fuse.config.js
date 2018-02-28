@@ -19,7 +19,8 @@ const {
   Sparky,
 } = require('fuse-box');
 
-const path = require('path');
+const path = require('path'),
+  express = require('express');
 
 exports.babelConfig = function({ paths }) {
   const isProduction = process.env.NODE_ENV == 'production';
@@ -145,7 +146,13 @@ exports.initBuilder = function({
   });
 
   Sparky.task('dev', ['config', 'static'], async () => {
-    fuse.dev({ port: port, root: targetDir });
+    fuse.dev({ root: false, port: port }, server => {
+      const app = server.httpServer.app;
+      app.use(express.static(targetDir));
+      app.get('*', function(req, res) {
+        res.sendfile(path.resolve(targetDir, 'index.html'));
+      });
+    });
     app.watch().hmr();
     return fuseRun();
   });
