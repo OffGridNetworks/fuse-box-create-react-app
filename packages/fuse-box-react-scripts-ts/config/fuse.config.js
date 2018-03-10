@@ -106,7 +106,7 @@ exports.initBuilder = function({
       const app = server.httpServer.app;
       app.use(express.static(targetDir));
       app.get('*', function(req, res) {
-        res.sendfile(path.resolve(targetDir, 'index.html'));
+        res.sendFile(path.resolve(targetDir, 'index.html'));
       });
     });
     app.watch().hmr();

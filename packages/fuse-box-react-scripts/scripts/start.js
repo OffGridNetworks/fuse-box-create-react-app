@@ -44,11 +44,6 @@ const isInteractive = process.stdout.isTTY;
 
 const isComponent = paths.appDocsJs ? true : false;
 
-// Warn and crash if required files are missing
-if (!isComponent && !checkRequiredFiles([paths.appHtml('index.html')])) {
-  process.exit(1);
-}
-
 // @remove-on-eject-begin
 // Do the preflight check (only happens before eject).
 const verifyPackageTree = require('./utils/verifyPackageTree');
