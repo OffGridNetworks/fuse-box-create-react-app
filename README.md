@@ -1,5 +1,5 @@
 # Fuse-Box Create React App
-
+ 
 Create React apps and components with no build configuration, with [FuseBox](http://fuse-box.org).
 
 - [FEBRUARY 2017] Forked from the Facebook Incubator version that to use [FuseBox](http://fuse-box.org) instead of webpack.
