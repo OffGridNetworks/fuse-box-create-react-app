@@ -176,17 +176,19 @@ inquirer
             ownDependency,
             'package.json'
           ));
-          Object.keys(childPackage.dependencies).forEach(key => {
-            // For some reason optionalDependencies end up in dependencies after install
-            if (
-              childPackage.optionalDependencies &&
-              childPackage.optionalDependencies[key]
-            ) {
-              return;
-            }
-            console.log(`  Adding ${cyan(key)} to devDependencies`);
-            devDependenciesToAdd[key] = childPackage.dependencies[key];
-          });
+          if (childPackage.dependencies) {
+            Object.keys(childPackage.dependencies).forEach(key => {
+                // For some reason optionalDependencies end up in dependencies after install
+                if (
+                childPackage.optionalDependencies &&
+                childPackage.optionalDependencies[key]
+                ) {
+                return;
+                }
+                console.log(`  Adding ${cyan(key)} to devDependencies`);
+                devDependenciesToAdd[key] = childPackage.dependencies[key];
+            });
+          }
         }
       });
 
