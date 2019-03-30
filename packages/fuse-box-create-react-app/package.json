@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-create-react-app",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "keywords": [
     "react"
   ],
@@ -35,5 +35,6 @@
     "tar-pack": "^3.4.1",
     "tmp": "0.1.0",
     "validate-npm-package-name": "^3.0.0"
-  }
+  },
+  "gitHead": "fc1d8639db2684ff890f8e6d078f0b465768154a"
 }

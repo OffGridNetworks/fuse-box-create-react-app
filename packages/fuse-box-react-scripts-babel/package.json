@@ -28,5 +28,6 @@
   },
   "devDependencies": {
     "fuse-box-react-scripts": "^4.0.0"
-  }
+  },
+  "gitHead": "fc1d8639db2684ff890f8e6d078f0b465768154a"
 }
