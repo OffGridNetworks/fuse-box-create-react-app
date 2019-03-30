@@ -6,6 +6,7 @@ Create React apps and components with no build configuration, with [FuseBox](htt
 - [MARCH 2017] Added equivalent ability to create components instead of apps, with React Storybook pre-integrated for testing / showcasing the use of a component without the need for any additional host app
 - [SEPTEMBER 2017] Updated to Fusebox 2.x API
 - [FEBRUARY 2018] Updated to Fusebox 3.x API, Babel 7.x, and reforked from latest Facebook non-incubator version
+- [MARCH 2019] Updated to Fusebox 3.7 API 
 
 * [Getting Started](#getting-started) – How to create a new app.
 * [User Guide](https://github.com/offgridnetworks/fuse-box-create-react-app/blob/master/packages/fuse-box-react-scripts/template/README.md) – How to develop apps bootstrapped with Create React App.

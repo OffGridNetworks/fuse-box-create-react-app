@@ -5,25 +5,25 @@
   "repository": "offgridnetworks/fuse-box-create-react-app",
   "license": "MIT",
   "engines": {
-    "node": ">=8"
+    "node": ">=8.3"
   },
   "bugs": {
     "url": "https://github.com/offgridnetworks/fuse-box-create-react-app/issues"
   },
   "dependencies": {
-    "@babel/core": "^7.0.0-0",
-    "@babel/plugin-proposal-class-properties": "^7.0.0-0",
-    "@babel/plugin-proposal-decorators": "^7.0.0-0",
-    "@babel/plugin-proposal-function-bind": "^7.0.0-0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.0.0-0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-0",
-    "@babel/plugin-transform-destructuring": "^7.0.0-0",
-    "@babel/plugin-transform-react-jsx": "^7.0.0-0",
-    "@babel/plugin-transform-regenerator": "^7.0.0-0",
-    "@babel/plugin-transform-runtime": "^7.0.0-0",
-    "@babel/preset-env": "^7.0.0-0",
-    "@babel/preset-react": "^7.0.0-0",
-    "@babel/runtime": "^7.0.0-0",
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-proposal-class-properties": "^7.4.0",
+    "@babel/plugin-proposal-decorators": "^7.4.0",
+    "@babel/plugin-proposal-function-bind": "^7.2.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
+    "@babel/plugin-transform-destructuring": "^7.4.0",
+    "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/plugin-transform-regenerator":"^7.4.0",
+    "@babel/plugin-transform-runtime": "^7.4.0",
+    "@babel/preset-env": "^7.4.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/runtime": "^7.4.2",
     "babel-core": "7.0.0-bridge.0"
   },
   "devDependencies": {
