@@ -20,7 +20,7 @@
     "react-scripts": "./bin/fuse-box-react-scripts.js",
     "fuse-box-react-scripts": "./bin/fuse-box-react-scripts.js"
   },
-  "dependencies": {
+  "dependencies": {    
     "browserslist": "^4.5.3",
     "chalk": "2.4.2",
     "cross-spawn": "6.0.5",
@@ -41,8 +41,8 @@
     "whatwg-fetch": "^3.0.0"
   },
   "devDependencies": {
-    "babel-core": "7.0.0-bridge.0",
-    "fuse-box-react-scripts-babel": "^4.0.2"
+    "babel-core": "7.0.0-bridge.0"
+
   },
   "optionalDependencies": {
     "fsevents": "1.2.4"

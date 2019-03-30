@@ -9,7 +9,6 @@
 const {
   FuseBox,
   EnvPlugin,
-  BabelPlugin,
   SVGPlugin,
   /* LESSPlugin, Add LESS, SASS, etc here if needed */
   CSSPlugin,
@@ -19,47 +18,25 @@ const {
   Sparky,
 } = require('fuse-box');
 
+const { BabelPlugin } = require('@berun/fuse-box-plugin-babel');
+
 const path = require('path'),
   express = require('express');
 
-exports.babelConfig = function({ paths }) {
+exports.babelConfig = function() {
   const isProduction = process.env.NODE_ENV == 'production';
-  const isTest = process.env.NODE_ENV == 'test';
-  const isDevelopment = process.env.NODE_ENV == 'development';
 
   return {
-    sourceMaps: !isProduction,
-    presets: [
-      [
-        '@babel/preset-env',
-        {
-          useBuiltIns: 'entry',
-          modules: 'commonjs',
-          targets: isTest
-            ? { node: '6.12' }
-            : {
-                browsers: require(paths.appPackageJson).browserslist[
-                  isProduction ? 'production' : 'development'
-                ],
-              },
-        },
-      ],
-      ['@babel/preset-react', { development: !isProduction }],
-    ],
-    plugins: [
-      '@babel/plugin-transform-destructuring',
-      '@babel/plugin-proposal-class-properties',
-      ['@babel/plugin-proposal-object-rest-spread', { useBuiltIns: true }],
-      ['@babel/plugin-transform-react-jsx', { useBuiltIns: true }],
-      [
-        '@babel/plugin-transform-runtime',
-        { helpers: false, polyfill: false, regenerator: true },
-      ],
-      ['@babel/plugin-transform-regenerator', { async: !isTest }],
-      '@babel/plugin-syntax-dynamic-import',
-      '@babel/plugin-proposal-decorators',
-      '@babel/plugin-proposal-function-bind',
-    ],
+    extensions: ['.js', '.jsx', '.mjs', '.ts', '.tsx'],
+    limit2project: true,
+    config: {
+      sourceMaps: !isProduction,
+      babelrc: false,
+      presets: ['@berun/babel-preset-react-app'],
+      highlightCode: true,
+      compact: options.ISPRODUCTION ? true : false,
+      ast: true,
+    },
   };
 };
 
@@ -76,8 +53,6 @@ exports.initBuilder = function({
   let fuse, app, vendor;
 
   const isProduction = process.env.NODE_ENV == 'production';
-  const isTest = process.env.NODE_ENV == 'test';
-  const isDevelopment = process.env.NODE_ENV == 'development';
 
   Sparky.task('config', () => {
     fuse = new FuseBox({
@@ -97,34 +72,22 @@ exports.initBuilder = function({
         /* [LESSPlugin(), CSSPlugin()],  Add LESS, SASS, etc here if needed */
         CSSPlugin(),
         JSONPlugin(),
-        !component &&
-          !componentdocs &&
-          WebIndexPlugin({
-            template: path.join(srcDir, 'index.html'),
-            path: './',
-          }),
+        WebIndexPlugin({
+          template: path.join(srcDir, 'index.html'),
+          path: './',
+        }),
         BabelPlugin(exports.babelConfig({ paths })),
         isProduction &&
-          !component &&
-          !componentdocs &&
           QuantumPlugin({ removeExportsInterop: false, uglify: true }),
       ],
     });
-    if (componentdocs) {
-      vendor = fuse
-        .bundle('manager')
-        .instructions('> __stories__/.storybook/index.js');
-      app = fuse.bundle('preview').instructions('> __stories__/index.js');
-    } else if (component) {
-      app = fuse.bundle('index').instructions('!> [index.js]');
-    } else {
-      vendor = fuse.bundle('vendor').instructions('~ index.js');
-      app = fuse.bundle('app').instructions('!> [index.js]');
-      /* Replace above two lines with below if single bundle preferred
-          app = fuse
-         .bundle('app')
-         .instructions('> index.js');   */
-    }
+
+    vendor = fuse.bundle('vendor').instructions('~ index.js');
+    app = fuse.bundle('app').instructions('!> [index.js]');
+    /* Replace above two lines with below if single bundle preferred
+        app = fuse
+       .bundle('app')
+       .instructions('> index.js');   */
   });
 
   Sparky.task('default', () => null);
@@ -161,7 +124,7 @@ exports.initBuilder = function({
     return fuseRun();
   });
 
-  /** 
+  /**
    * Helper function to run FuseBox with automatic build error trapping
    * */
   function fuseRun() {
