@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-scripts-babel",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Babel Dependencies for Fuse-Box Create React App.",
   "repository": "offgridnetworks/fuse-box-create-react-app",
   "license": "MIT",
@@ -27,7 +27,7 @@
     "babel-core": "7.0.0-bridge.0"
   },
   "devDependencies": {
-    "fuse-box-react-scripts": "^4.0.0"
+    "fuse-box-react-scripts": "^4.0.1"
   },
   "gitHead": "fc1d8639db2684ff890f8e6d078f0b465768154a"
 }

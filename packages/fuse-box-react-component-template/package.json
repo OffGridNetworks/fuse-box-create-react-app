@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-component-template",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "keywords": [
     "react",
     "fuse-box"
@@ -33,7 +33,7 @@
     "babel-jest": "24.5.0"
   },
   "devDependencies": {
-    "fuse-box-react-scripts": "^4.0.0"
+    "fuse-box-react-scripts": "^4.0.1"
   },
   "gitHead": "fc1d8639db2684ff890f8e6d078f0b465768154a"
 }
