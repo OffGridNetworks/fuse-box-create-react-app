@@ -34,7 +34,7 @@ exports.babelConfig = function() {
       babelrc: false,
       presets: ['@berun/babel-preset-react-app'],
       highlightCode: true,
-      compact: options.ISPRODUCTION ? true : false,
+      compact: isProduction ? true : false,
       ast: true,
     },
   };
