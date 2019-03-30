@@ -1,6 +1,6 @@
 {
   "name": "fuse-box-react-component-template",
-  "version": "4.0.2",
+  "version": "4.0.3",
   "keywords": [
     "react",
     "fuse-box"
@@ -12,12 +12,12 @@
     "node": ">=8.3"
   },
   "dependencies": {
-    "fuse-box-react-scripts-babel": "4.0.2",
     "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "24.5.0"
+    "babel-jest": "24.5.0",
+    "fuse-box-react-scripts-babel": "^4.0.3"
   },
   "devDependencies": {
-    "fuse-box-react-scripts": "^4.0.2"
+    "fuse-box-react-scripts": "^4.0.3"
   },
   "gitHead": "e97d78df088c5eb8f4f67c8e55a9beccf23d94d7"
 }
